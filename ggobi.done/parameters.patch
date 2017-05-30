@@ -1,0 +1,15 @@
+diff -urN a/src/barchart.c b/src/barchart.c
+--- a/src/barchart.c	2015-04-02 00:10:25.000000000 +0100
++++ b/src/barchart.c	2015-04-02 00:11:55.000000000 +0100
+@@ -1639,6 +1639,10 @@
+ }
+ 
+ void
+-barchartRulerRangesSet ( ) {
++barchartRulerRangesSet (gboolean a, displayd * b, splotd * c, ggobid * d) {
+   // Do nothing!
++  (void)a;
++  (void)b;
++  (void)c;
++  (void)d;
+ }

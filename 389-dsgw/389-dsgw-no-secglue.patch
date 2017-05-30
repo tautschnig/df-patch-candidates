@@ -1,0 +1,34 @@
+commit 597ebc4caed8735c4c1d3c35573944a5ee51d5a3
+Author: Michael Tautschnig <mt@debian.org>
+Date:   Thu Oct 9 22:53:43 2014 +0100
+
+    Disable secglue.c
+
+diff --git a/Makefile.am b/Makefile.am
+index a710cdf..ce3318b 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -141,17 +141,17 @@ COMMON_SOURCES = htmlout.c htmlparse.c error.c cgiutil.c dsgwutil.c ldaputil.c \
+ 	entrydisplay.c config.c	cookie.c emitauth.c emitf.c collate.c vcard.c \
+ 	Versiongw.c utf8compare.c dsgwgetlang.c $(MOZLDAP_SOURCES)
+ 
+-unauth_SOURCES = unauth.c $(COMMON_SOURCES) secglue.c
++unauth_SOURCES = unauth.c $(COMMON_SOURCES)
+ unauth_LDADD = $(DSGW_LIBS)
+-search_SOURCES = search.c $(COMMON_SOURCES) secglue.c
++search_SOURCES = search.c $(COMMON_SOURCES)
+ search_LDADD = $(DSGW_LIBS)
+-csearch_SOURCES = csearch.c $(COMMON_SOURCES) secglue.c
++csearch_SOURCES = csearch.c $(COMMON_SOURCES)
+ csearch_LDADD = $(DSGW_LIBS)
+-newentry_SOURCES = newentry.c $(COMMON_SOURCES) secglue.c
++newentry_SOURCES = newentry.c $(COMMON_SOURCES)
+ newentry_LDADD = $(DSGW_LIBS)
+-tutor_SOURCES = tutor.c $(COMMON_SOURCES) secglue.c
++tutor_SOURCES = tutor.c $(COMMON_SOURCES)
+ tutor_LDADD = $(DSGW_LIBS)
+-lang_SOURCES = lang.c $(COMMON_SOURCES) secglue.c
++lang_SOURCES = lang.c $(COMMON_SOURCES)
+ lang_LDADD = $(DSGW_LIBS)
+ 
+ auth_SOURCES = auth.c $(COMMON_SOURCES)

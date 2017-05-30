@@ -1,0 +1,34 @@
+From 96cbba90a5ccf29c2124b8d4d46ed534861ccf44 Mon Sep 17 00:00:00 2001
+From: Tobias Klauser <tklauser@distanz.ch>
+Date: Mon, 2 Jun 2014 13:59:39 +0200
+Subject: [PATCH] mausezahn: Don't use ternary operator to decide which
+ function to call
+
+Replace an odd use of the ternary operator with a more readable if/else.
+This fixes Debian Bug #750077.
+
+Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
+---
+ staging/modifications.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/staging/modifications.c b/staging/modifications.c
+index 3dc2abf..08e9fb0 100644
+--- a/staging/modifications.c
++++ b/staging/modifications.c
+@@ -638,7 +638,11 @@ int print_frame_details()
+    
+    dum1 =  (unsigned char*) &tx.ip_src_h;
+    dum2 = (unsigned char*) &tx.ip_dst_h;
+-   (mode==IP) ? (void) bs2str(tx.ip_payload, pld, tx.ip_payload_s) : strcpy(pld, "[see next layer]");
++   if (mode==IP) {
++     (void) bs2str(tx.ip_payload, pld, tx.ip_payload_s);
++   } else {
++     strcpy(pld, "[see next layer]");
++   }
+ 
+    if (ipv6_mode) {
+      char src6[64]; char dst6[64];
+-- 
+1.7.9.5
+

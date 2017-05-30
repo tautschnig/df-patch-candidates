@@ -1,0 +1,29 @@
+diff -urN a/hdf5.c b/hdf5.c
+--- a/hdf5.c	2015-04-02 00:35:17.000000000 +0100
++++ b/hdf5.c	2015-04-02 00:47:51.000000000 +0100
+@@ -36,12 +36,12 @@
+ #include "ydata.h"
+ #include "pstdlib.h"
+ 
+-void Y__H5Eon()   { H5Eset_auto((H5E_auto_t)H5Eprint,stderr); }
+-void Y__H5Eoff()  { H5Eset_auto(NULL,NULL); }
+-void Y__H5close() { H5close(); }
+-void Y__H5open()  { H5open(); }
++void Y__H5Eon(int a)   { (void)a; H5Eset_auto((H5E_auto_t)H5Eprint,stderr); }
++void Y__H5Eoff(int a)  { (void)a; H5Eset_auto(NULL,NULL); }
++void Y__H5close(int a) { (void)a; H5close(); }
++void Y__H5open(int a)  { (void)a; H5open(); }
+ 
+-void Y__H5version()
++void Y__H5version(int b)
+ {
+   unsigned majnum,minnum,relnum;
+   H5get_libversion ( &majnum, &minnum, &relnum);
+@@ -49,6 +49,7 @@
+   a->value.l[0]=(long)majnum;
+   a->value.l[1]=(long)minnum;
+   a->value.l[2]=(long)relnum;
++  (void)b;
+ }
+ 
+ 

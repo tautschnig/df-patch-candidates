@@ -1,0 +1,13 @@
+--- a/modules/FvwmScript/FvwmScript.c
++++ b/modules/FvwmScript/FvwmScript.c
+@@ -76,9 +76,9 @@
+ Window ref;
+ FlocaleWinString *FwinString;
+ 
+ extern int yyparse(void);
+-extern void (*TabCom[25]) (int NbArg,long *TabArg);
++extern void (*TabCom[29]) (int NbArg,long *TabArg);
+ 
+ Display *dpy;
+ int screen;
+ Window  Root;

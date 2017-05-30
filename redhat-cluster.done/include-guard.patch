@@ -1,0 +1,20 @@
+diff -urN a/rgmanager/include/platform.h b/rgmanager/include/platform.h
+--- a/rgmanager/include/platform.h	2015-03-21 15:28:28.000000000 +0000
++++ b/rgmanager/include/platform.h	2015-03-21 15:29:44.000000000 +0000
+@@ -1,8 +1,8 @@
+ /** @file
+  * Defines for byte-swapping
+  */
+-#ifndef _PLATFORM_H
+-#define _PLATFORM_H
++#ifndef RG_PLATFORM_H
++#define RG_PLATFORM_H
+ 
+ #include <endian.h>
+ #include <sys/param.h>
+@@ -56,4 +56,4 @@
+ #define PACKED __attribute__((packed))
+ #endif
+ 
+-#endif /* _PLATFORM_H */
++#endif /* RG_PLATFORM_H */

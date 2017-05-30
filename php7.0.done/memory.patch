@@ -1,0 +1,21 @@
+diff -urN a/main/streams/memory.c b/main/streams/memory.c
+--- a/main/streams/memory.c	2016-02-19 02:17:42.000000000 +0000
++++ b/main/streams/memory.c	2016-02-19 02:18:41.000000000 +0000
+@@ -21,7 +21,7 @@
+ #include "php.h"
+ #include "ext/standard/base64.h"
+ 
+-PHPAPI int php_url_decode(char *str, int len);
++PHPAPI size_t php_url_decode(char *str, size_t len);
+ 
+ /* Memory streams use a dynamic memory buffer to emulate a stream.
+  * You can use php_stream_memory_open to create a readonly stream
+@@ -729,7 +729,7 @@
+ 		ilen = (int)ZSTR_LEN(base64_comma);
+ 	} else {
+ 		comma = estrndup(comma, dlen);
+-		dlen = php_url_decode(comma, (int)dlen);
++		dlen = php_url_decode(comma, dlen);
+ 		ilen = (int)dlen;
+ 	}
+ 

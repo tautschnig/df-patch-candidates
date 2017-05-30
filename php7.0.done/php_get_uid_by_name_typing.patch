@@ -1,0 +1,12 @@
+diff -urN a/main/streams/plain_wrapper.c b/main/streams/plain_wrapper.c
+--- a/main/streams/plain_wrapper.c	2016-02-19 12:15:40.000000000 +0000
++++ b/main/streams/plain_wrapper.c	2016-02-19 12:16:28.000000000 +0000
+@@ -50,7 +50,7 @@
+ #define php_stream_fopen_from_file_int_rel(file, mode)	 _php_stream_fopen_from_file_int((file), (mode) STREAMS_REL_CC)
+ 
+ #if !defined(WINDOWS) && !defined(NETWARE)
+-extern int php_get_uid_by_name(const char *name, uid_t *uid);
++extern uid_t php_get_uid_by_name(const char *name, uid_t *uid);
+ extern int php_get_gid_by_name(const char *name, gid_t *gid);
+ #endif
+ 

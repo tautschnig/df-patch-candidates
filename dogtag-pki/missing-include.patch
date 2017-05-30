@@ -1,0 +1,11 @@
+diff -urN a/base/native-tools/src/setpin/options.c b/base/native-tools/src/setpin/options.c
+--- a/base/native-tools/src/setpin/options.c	2016-01-24 13:00:19.000000000 +0000
++++ b/base/native-tools/src/setpin/options.c	2016-01-24 13:00:52.000000000 +0000
+@@ -24,6 +24,7 @@
+ #include <stdio.h>
+ #include <string.h>
+ #include <assert.h>
++#include <stdlib.h>
+ 
+ /*
+  * (C) 1998 Netscape Communications Corporation

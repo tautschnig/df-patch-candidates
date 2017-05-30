@@ -1,0 +1,13 @@
+--- a/oc2/oc.h
++++ b/oc2/oc.h
+@@ -536,9 +536,9 @@
+ /* Get the HTTP return code from the last call;
+    note that this may or may not be the same as returned
+    by oc_svcerrordata.
+  */
+-extern int oc_httpcode(OClink);
++extern OCerror oc_httpcode(OClink);
+ 
+ /*
+ (Re-)initialize the oc library as if nothing had been called.
+ This is primarily for debugging of rc files.

@@ -1,0 +1,35 @@
+diff -urN a/regress/unittests/kex/test_kex.c b/regress/unittests/kex/test_kex.c
+--- a/regress/unittests/kex/test_kex.c	2016-02-20 14:18:16.000000000 +0000
++++ b/regress/unittests/kex/test_kex.c	2016-02-20 14:18:38.000000000 +0000
+@@ -24,6 +24,7 @@
+ #include "packet.h"
+ #include "myproposal.h"
+ 
++int use_privsep=0;
+ struct ssh *active_state = NULL; /* XXX - needed for linking */
+ 
+ void kex_tests(void);
+diff -urN a/ssh-keyscan.c b/ssh-keyscan.c
+--- a/ssh-keyscan.c	2016-02-20 12:13:28.000000000 +0000
++++ b/ssh-keyscan.c	2016-02-20 12:15:03.000000000 +0000
+@@ -48,6 +48,8 @@
+ #include "ssherr.h"
+ #include "ssh_api.h"
+ 
++int use_privsep=0;
++
+ /* Flag indicating whether IPv4 or IPv6.  This can be set on the command line.
+    Default value is AF_UNSPEC means both IPv4 and IPv6. */
+ int IPv4or6 = AF_UNSPEC;
+diff -urN a/ssh_api.c b/ssh_api.c
+--- a/ssh_api.c	2016-02-20 05:33:30.000000000 +0000
++++ b/ssh_api.c	2016-02-20 05:34:20.000000000 +0000
+@@ -47,7 +47,7 @@
+  * stubs for the server side implementation of kex.
+  * disable privsep so our stubs will never be called.
+  */
+-int	use_privsep = 0;
++extern int	use_privsep;
+ int	mm_sshkey_sign(struct sshkey *, u_char **, u_int *,
+     u_char *, u_int, u_int);
+ DH	*mm_choose_dh(int, int, int);

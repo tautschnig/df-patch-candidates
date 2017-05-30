@@ -1,0 +1,12 @@
+diff -urN a/debian/control b/debian/control
+--- a/debian/control	2014-09-11 10:59:34.000000000 +0100
++++ b/debian/control	2016-01-23 13:51:49.000000000 +0000
+@@ -4,7 +4,7 @@
+ Maintainer: Debian Monitoring Maintainers <pkg-monitoring-maintainers@lists.alioth.debian.org>
+ Uploaders: Stuart Teasdale <sdt@debian.org>, Daniel Pocock <daniel@pocock.pro>
+ Homepage: http://ganglia.info/
+-Build-Depends: debhelper (>> 9.0.0), librrd2-dev, autoconf, autotools-dev, automake, libapr1-dev, libexpat1-dev, python-dev, libconfuse-dev, po-debconf, libxml2-dev, libdbi0-dev, libpcre3-dev, gperf, libtool, rsync, libkvm-dev [kfreebsd-any]
++Build-Depends: debhelper (>> 9.0.0), librrd-dev, autoconf, autotools-dev, automake, libapr1-dev, libexpat1-dev, python-dev, libconfuse-dev, po-debconf, libxml2-dev, libdbi0-dev, libpcre3-dev, gperf, libtool, rsync, libkvm-dev [kfreebsd-any]
+ Standards-Version: 3.9.4
+ Vcs-Git: git://anonscm.debian.org/pkg-monitoring/ganglia.git
+ Vcs-Browser: http://anonscm.debian.org/cgit/pkg-monitoring/ganglia.git

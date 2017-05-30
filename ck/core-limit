@@ -1,0 +1,11 @@
+--- a/debian/rules	2014-09-11 04:30:40.000000000 +0100
++++ b/debian/rules	2014-10-11 14:50:15.276486197 +0100
+@@ -1,7 +1,7 @@
+ #!/usr/bin/make -f
+ 
+ override_dh_auto_configure:
+-	./configure --includedir=/usr/include --libdir=/usr/lib/$(DEB_HOST_MULTIARCH) --mandir=/usr/share/man --prefix=/usr
++	./configure --cores=4 --includedir=/usr/include --libdir=/usr/lib/$(DEB_HOST_MULTIARCH) --mandir=/usr/share/man --prefix=/usr
+ 
+ %:
+ 	dh $@

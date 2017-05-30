@@ -1,0 +1,323 @@
+--- a/src/exec/dxmods/_glyph.c
++++ b/src/exec/dxmods/_glyph.c
+@@ -50,7 +50,7 @@
+ static int _dxfHasDataComponent(Object);
+ 
+ extern Object Exists2(Object o, char *name, char *name2); /* from libdx/component.c */
+-extern Error _dxfDXEmptyObject(Object); /* from libdx/component.c */
++extern Object _dxfDXEmptyObject(Object o); /* from libdx/component.c */
+ 
+ Error _dxfGetFieldTensorStats(Field, float *, float *);
+ 
+--- a/src/exec/dxmods/private.c
++++ b/src/exec/dxmods/private.c
+@@ -25,7 +25,7 @@
+  * These are modules which are internal to the exec and aren't exposed to
+  * the user in the dx.mdf file.
+  */
+-Error
++void
+ _dxf_private_modules()
+ {
+     {
+--- a/src/exec/dxmods/superwin.h
++++ b/src/exec/dxmods/superwin.h
+@@ -42,19 +42,19 @@
+     int			kstate;
+ } ImageWindow;
+ 
+-Error saveEvent(ImageWindow *, int, int);
+-int   _dxf_mapSupervisedWindow(char *, int);
++//Error saveEvent(ImageWindow *, int, int);
++//int   _dxf_mapSupervisedWindow(char *, int);
+ 
+ /* from superwinX.c */
+-int   _dxf_getWindowId(ImageWindow *);
+-int   _dxf_getParentSize(char *, int, int *, int *);
+-void  _dxf_setWindowSize(ImageWindow *, int *);
+-void  _dxf_setWindowOffset(ImageWindow *, int *);
+-int   _dxf_mapWindowX(ImageWindow *, int);
+-int   _dxf_checkDepth(ImageWindow *, int);
+-int   _dxf_createWindowX(ImageWindow *, int);
+-void  _dxf_deleteWindowX(ImageWindow *);
+-int   _dxf_samplePointer(ImageWindow *, int);
++//int   _dxf_getWindowId(ImageWindow *);
++//int   _dxf_getParentSize(char *, int, int *, int *);
++//void  _dxf_setWindowSize(ImageWindow *, int *);
++//void  _dxf_setWindowOffset(ImageWindow *, int *);
++//int   _dxf_mapWindowX(ImageWindow *, int);
++//int   _dxf_checkDepth(ImageWindow *, int);
++//int   _dxf_createWindowX(ImageWindow *, int);
++//void  _dxf_deleteWindowX(ImageWindow *);
++//int   _dxf_samplePointer(ImageWindow *, int);
+ 
+ 
+ #endif /* _SUPERWIN_H_ */
+--- a/src/exec/dxmods/superwinX.c
++++ b/src/exec/dxmods/superwinX.c
+@@ -18,8 +18,8 @@
+ #define Array void *
+ #include "superwin.h"
+ 
+-extern void  *DXAllocateZero(int); /* from libdx/memory.c */
+-extern void  DXFree(void *); /* from libdx/memory.c */
++extern void  *DXAllocateZero(unsigned int); /* from libdx/memory.c */
++extern int  DXFree(void *); /* from libdx/memory.c */
+ extern int   DXRegisterWindowHandlerWithCheckProcWithCheckProc(int (*proc)(int, void *), /* from libdx/xwindow.c */
+ 			int (*check)(int, void *), Display *, void *);
+ 
+--- a/src/exec/dxmods/dxlinnamed.c
++++ b/src/exec/dxmods/dxlinnamed.c
+@@ -18,7 +18,7 @@
+ extern Error DXRegisterForNotification(char *, Pointer); /* from libdx/notify.c */
+ extern Error DXNotifyRegistered(char *); /* from libdx/notify.c */
+ extern Error DXGetVariable(char *, Object *); /* from dpexec/variable.c */
+-extern Error DXSetVariable(char *, Object); /* from dpexec/variable.c */
++extern Error DXSetVariable(char *, Object, int, int); /* from dpexec/variable.c */
+ 
+ #define NAME	in[0]
+ #define DEFAULT	in[1]
+@@ -40,7 +40,7 @@
+     char *name;
+ 
+     if (DXExtractString(args[0], &name))
+-	if (! DXSetVariable(name, args[1]))
++	if (! DXSetVariable(name, args[1], FALSE, FALSE))
+ 	    args[1] = NULL;
+     
+     return OK;
+--- a/src/exec/libdx/box.c
++++ b/src/exec/libdx/box.c
+@@ -214,7 +214,7 @@
+ }
+ 
+ Object
+-_dxfCompositeField_BoundingBox(Group g, Point *box, Matrix *m, int validity)
++_dxfCompositeField_BoundingBox(CompositeField g, Point *box, Matrix *m, int validity)
+ {
+     Object o;
+     int i, j, n=0;
+--- a/src/exec/dxmods/export.c
++++ b/src/exec/dxmods/export.c
+@@ -14,7 +14,7 @@
+ #include "exp_gai.h"
+ 
+ extern Object _dxfExportBin(Object o, char *dataset); /* from libdx/rwobject.c */
+-extern Error _dxfExportDX(Object o, char *filename, char *format); /* from libdx/edfprint.c */
++extern Object _dxfExportDX(Object o, char *filename, char *format); /* from libdx/edfprint.c */
+ 
+ /* formats we accept */
+ #define DT_UNKNOWN  0
+--- a/src/exec/libdx/grow.c
++++ b/src/exec/libdx/grow.c
+@@ -24,10 +24,10 @@
+ static Object GrowObject(Object, int, Pointer, Array);
+ 
+ extern Object _dxfRegGrow(Object, int, Pointer, Array);
+-extern Object _dxfIrregGrow(Object, int, Array);
++extern Object _dxfIrregGrow(Group, int, Array);
+ 
+-extern Object _dxfRegInvalidateDupBoundary(Object);
+-extern Object _dxfIrregInvalidateDupBoundary(Object);
++extern Error _dxfRegInvalidateDupBoundary(CompositeField);
++extern Object _dxfIrregInvalidateDupBoundary(Group);
+ 
+ extern Object _dxfRegShrink(Object);
+ extern Object _dxfIrregShrink(Object);
+--- a/src/exec/libdx/paint.c
++++ b/src/exec/libdx/paint.c
+@@ -287,7 +287,7 @@
+  */
+ 
+ Object
+-_dxfLight_Paint(Light l, struct buffer *b, int clip_status)
++_dxfLight_Paint(Light l, struct buffer *b, int clip_status, struct tile *tile)
+ {
+     return (Object) l;
+ }
+--- a/src/exec/libdx/interp.c
++++ b/src/exec/libdx/interp.c
+@@ -18,11 +18,11 @@
+ 
+ typedef long CRC;
+ 
+-Interpolator _dxfNewGroupInterpolator(Group, 
+-			enum interp_init, float, Matrix *);
++//Interpolator _dxfNewGroupInterpolator(Group, 
++//			enum interp_init, float, Matrix *);
+ 
+-Interpolator _dxfSelectFieldInterpolator(Field, 
+-			enum interp_init, float, Matrix *);
++//Interpolator _dxfSelectFieldInterpolator(Field, 
++//			enum interp_init, float, Matrix *);
+ 
+ static Error _dxfValidInterpolatorMap(Object);
+ 
+@@ -127,16 +127,16 @@
+ 	    break;
+ 	    
+ 	case CLASS_GROUP:
+-	    interp = (Interpolator)_dxfNewGroupInterpolator((Group)o,
+-						    initType, fuzz, stack);
+-	    if (! interp)
++	    //interp = (Interpolator)_dxfNewGroupInterpolator((Group)o,
++		//				    initType, fuzz, stack);
++	    //if (! interp)
+ 		goto error;
+ 
+ 	    break;
+ 	case CLASS_FIELD:
+-	    interp = (Interpolator)_dxfSelectFieldInterpolator((Field)o,
+-						    initType, fuzz, stack);
+-	    if (! interp)
++	    //interp = (Interpolator)_dxfSelectFieldInterpolator((Field)o,
++		//				    initType, fuzz, stack);
++	    //if (! interp)
+ 		goto error;
+ 
+ 	    break;
+--- a/src/exec/libdx/fieldinterp.c
++++ b/src/exec/libdx/fieldinterp.c
+@@ -15,39 +15,43 @@
+ #include <string.h>
+ #include "dx/dx.h"
+ #include "fieldinterpClass.h"
++#include "fle2DClass.h"
++//#include "linesII1DClass.h"
++//#include "linesRR1DClass.h"
++//#include "linesRI1DClass.h"
+ 
+ typedef int          	  (*PFI)();
+ typedef FieldInterpolator (*PFFI)();
+ 
+ int	_dxfRecognizeTetras(Field);
+-PFFI	_dxfNewTetrasInterpolator(Field, enum interp_init, double, Matrix *);
++//PFFI	_dxfNewTetrasInterpolator(Field, enum interp_init, double, Matrix *);
+ 
+ int	_dxfRecognizeLinesII1D(Field);
+-PFFI	_dxfNewLinesII1DInterpolator(Field, enum interp_init, double, Matrix *);
++//LinesII1DInterpolator	_dxfNewLinesII1DInterpolator(Field, enum interp_init, double, Matrix *);
+ 
+ int	_dxfRecognizeLinesRR1D(Field);
+-PFFI	_dxfNewLinesRR1DInterpolator(Field, enum interp_init, double, Matrix *);
++//LinesRR1DInterpolator	_dxfNewLinesRR1DInterpolator(Field, enum interp_init, double, Matrix *);
+ 
+ int	_dxfRecognizeTrisRI2D(Field);
+-PFFI	_dxfNewTrisRI2DInterpolator(Field, enum interp_init, double, Matrix *);
++//PFFI	_dxfNewTrisRI2DInterpolator(Field, enum interp_init, double, Matrix *);
+ 
+ int	_dxfRecognizeQuadsRR2D(Field);
+-PFFI	_dxfNewQuadsRR2DInterpolator(Field, enum interp_init, double, Matrix *);
++//PFFI	_dxfNewQuadsRR2DInterpolator(Field, enum interp_init, double, Matrix *);
+ 
+ int	_dxfRecognizeQuadsII2D(Field);
+-PFFI	_dxfNewQuadsII2DInterpolator(Field, enum interp_init, double, Matrix *);
++//PFFI	_dxfNewQuadsII2DInterpolator(Field, enum interp_init, double, Matrix *);
+ 
+ int	_dxfRecognizeCubesII(Field);
+-PFFI	_dxfNewCubesIIInterpolator(Field, enum interp_init, double, Matrix *);
++//PFFI	_dxfNewCubesIIInterpolator(Field, enum interp_init, double, Matrix *);
+ 
+ int     _dxfRecognizeLinesRI1D(Field);
+-PFFI    _dxfNewLinesRI1DInterpolator(Field, enum interp_init, double, Matrix *);
++//LinesRI1DInterpolator    _dxfNewLinesRI1DInterpolator(Field, enum interp_init, double, Matrix *);
+ 
+ int	_dxfRecognizeCubesRR(Field);
+-PFFI	_dxfNewCubesRRInterpolator(Field, enum interp_init, double, Matrix *);
++//PFFI	_dxfNewCubesRRInterpolator(Field, enum interp_init, double, Matrix *);
+ 
+ int	_dxfRecognizeFLE2D(Field);
+-PFFI	_dxfNewFle2DInterpolator(Field, enum interp_init, double, Matrix *);
++Fle2DInterpolator	_dxfNewFle2DInterpolator(Field, enum interp_init, double, Matrix *);
+ 
+ static struct subClass
+ {
+@@ -55,15 +59,15 @@
+     PFFI	newMth;
+ } _dxdsubClasses[] =
+     {
+-	{ _dxfRecognizeTetras,    (PFFI)_dxfNewTetrasInterpolator    },
+-	{ _dxfRecognizeLinesRR1D, (PFFI)_dxfNewLinesRR1DInterpolator },
+-	{ _dxfRecognizeLinesRI1D, (PFFI)_dxfNewLinesRI1DInterpolator },
+-	{ _dxfRecognizeLinesII1D, (PFFI)_dxfNewLinesII1DInterpolator },
+-	{ _dxfRecognizeTrisRI2D,  (PFFI)_dxfNewTrisRI2DInterpolator  },
+-	{ _dxfRecognizeQuadsRR2D, (PFFI)_dxfNewQuadsRR2DInterpolator },
+-	{ _dxfRecognizeQuadsII2D, (PFFI)_dxfNewQuadsII2DInterpolator },
+-	{ _dxfRecognizeCubesRR,   (PFFI)_dxfNewCubesRRInterpolator   },
+-	{ _dxfRecognizeCubesII,   (PFFI)_dxfNewCubesIIInterpolator   },
++//	{ _dxfRecognizeTetras,    (PFFI)_dxfNewTetrasInterpolator    },
++//	{ _dxfRecognizeLinesRR1D, (PFFI)_dxfNewLinesRR1DInterpolator },
++//	{ _dxfRecognizeLinesRI1D, (PFFI)_dxfNewLinesRI1DInterpolator },
++//	{ _dxfRecognizeLinesII1D, (PFFI)_dxfNewLinesII1DInterpolator },
++//	{ _dxfRecognizeTrisRI2D,  (PFFI)_dxfNewTrisRI2DInterpolator  },
++//	{ _dxfRecognizeQuadsRR2D, (PFFI)_dxfNewQuadsRR2DInterpolator },
++//	{ _dxfRecognizeQuadsII2D, (PFFI)_dxfNewQuadsII2DInterpolator },
++//	{ _dxfRecognizeCubesRR,   (PFFI)_dxfNewCubesRRInterpolator   },
++//	{ _dxfRecognizeCubesII,   (PFFI)_dxfNewCubesIIInterpolator   },
+ 	{ _dxfRecognizeFLE2D,     (PFFI)_dxfNewFle2DInterpolator     },
+ 	{ NULL,		          NULL		   	             }
+     };
+--- a/src/exec/libdx/binSort.h
++++ b/src/exec/libdx/binSort.h
+@@ -6,6 +6,9 @@
+ /*    "IBM PUBLIC LICENSE - Open Visualization Data Explorer"          */
+ /***********************************************************************/
+ 
++#ifndef __BINSORT_H_
++#define __BINSORT_H_
++
+ #include <dxconfig.h>
+ 
+ 
+@@ -66,3 +69,5 @@
+     struct _item 	*items;
+     int	   	    	next;
+ };
++
++#endif
+--- a/src/exec/hwrender/hwRender.c
++++ b/src/exec/hwrender/hwRender.c
+@@ -492,7 +492,7 @@
+ 
+ extern Field _dxfCaptureHardwareImage(tdmChildGlobalP);
+ 
+-dxObject
++Field
+ _dxfSaveHardwareWindow(char *where)
+ {
+     Private           cacheObject = NULL;
+@@ -542,7 +542,7 @@
+     if(cacheObject)
+         DXDelete((Pointer)cacheObject) ;
+ 
+-    return (dxObject)image;
++    return image;
+ }
+ 
+ int BackingStore = TRUE;
+--- a/src/exec/hwrender/hwXfield.c
++++ b/src/exec/hwrender/hwXfield.c
+@@ -127,7 +127,7 @@
+   Xfield component functions
+ \*=====================================================================*/
+ extern Error _dxfTriangulateField(Field);
+-extern Error _dxf_XNeighbors(Field f, xfieldT *xf, enum xr required, enum xd xd);
++// extern Error _dxf_XNeighbors(Field f, xfieldT *xf, enum xr required, enum xd xd);
+ extern Error _dxf_linesToPlines (xfieldT *xf);
+ extern Error _dxf_linesToPlines (xfieldT *xf);
+ extern Error _dxf_trisToTmesh (xfieldT *xf, tdmChildGlobalP globals);
+--- a/src/exec/hwrender/hwPortHandle.c
++++ b/src/exec/hwrender/hwPortHandle.c
+@@ -43,10 +43,10 @@
+ extern tdmInteractorEchoP   	_dxf_initInteractorEchoPort ();
+ 
+ #if defined(DX_NATIVE_WINDOWS)
+-int _dxfHWload(tdmPortHandleP (**initPP)(char*,void(*)(tdmPortHandleP)));
++int _dxfHWload(tdmPortHandleP (**initPP)(char*));
+ #else
+ int
+-_dxfHWload(tdmPortHandleP (**initPP)(Display*, char*,void(*)(tdmPortHandleP)), Display *);
++_dxfHWload(tdmPortHandleP (**initPP)(Display*, char*), Display *dpy);
+ #endif
+ 
+ 

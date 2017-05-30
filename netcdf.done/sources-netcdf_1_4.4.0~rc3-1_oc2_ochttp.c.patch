@@ -1,0 +1,18 @@
+--- a/oc2/ochttp.c
++++ b/oc2/ochttp.c
+@@ -87,13 +87,13 @@
+ 	oclog(OCLOGERR, "curl error: %s", curl_easy_strerror(cstat));
+ 	return OCTHROW(OC_ECURL);
+ }
+ 
+-int
++OCerror
+ ocfetchurl(CURL* curl, const char* url, OCbytes* buf, long* filetime,
+            struct OCcredentials* creds)
+ {
+-	int stat = OC_NOERR;
++	OCerror stat = OC_NOERR;
+ 	CURLcode cstat = CURLE_OK;
+ 	size_t len;
+         long httpcode = 0;
+ 

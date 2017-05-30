@@ -1,0 +1,82 @@
+diff -urN a/ffplay.c b/ffplay.c
+--- a/ffplay.c	2015-08-16 18:11:08.000000000 +0100
++++ b/ffplay.c	2015-08-16 18:11:22.000000000 +0100
+@@ -3642,7 +3642,7 @@
+     show_mode = !strcmp(arg, "video") ? SHOW_MODE_VIDEO :
+                 !strcmp(arg, "waves") ? SHOW_MODE_WAVES :
+                 !strcmp(arg, "rdft" ) ? SHOW_MODE_RDFT  :
+-                parse_number_or_die(opt, arg, OPT_INT, 0, SHOW_MODE_NB-1);
++                (enum ShowMode)parse_number_or_die(opt, arg, OPT_INT, 0, SHOW_MODE_NB-1);
+     return 0;
+ }
+ 
+diff -urN a/libavfilter/vf_drawtext.c b/libavfilter/vf_drawtext.c
+--- a/libavfilter/vf_drawtext.c	2015-08-16 16:52:14.000000000 +0100
++++ b/libavfilter/vf_drawtext.c	2015-08-16 16:54:57.000000000 +0100
+@@ -785,7 +785,7 @@
+ {
+     DrawTextContext *s = ctx->priv;
+ 
+-    av_bprintf(bp, "%c", av_get_picture_type_char(s->var_values[VAR_PICT_TYPE]));
++    av_bprintf(bp, "%c", av_get_picture_type_char((enum AVPictureType)s->var_values[VAR_PICT_TYPE]));
+     return 0;
+ }
+ 
+diff -urN a/libavformat/rtpdec.h b/libavformat/rtpdec.h
+--- a/libavformat/rtpdec.h	2015-08-16 18:03:29.000000000 +0100
++++ b/libavformat/rtpdec.h	2015-08-16 18:04:09.000000000 +0100
+@@ -106,7 +106,7 @@
+  * @param flags flags from the RTP packet header (RTP_FLAG_*)
+  */
+ typedef int (*DynamicPayloadPacketHandlerProc)(AVFormatContext *ctx,
+-                                               PayloadContext *s,
++                                               void *s,
+                                                AVStream *st, AVPacket *pkt,
+                                                uint32_t *timestamp,
+                                                const uint8_t * buf,
+@@ -123,17 +123,17 @@
+     int priv_data_size;
+ 
+     /** Initialize dynamic protocol handler, called after the full rtpmap line is parsed, may be null */
+-    int (*init)(AVFormatContext *s, int st_index, PayloadContext *priv_data);
++    int (*init)(AVFormatContext *s, int st_index, void *priv_data);
+     /** Parse the a= line from the sdp field */
+     int (*parse_sdp_a_line)(AVFormatContext *s, int st_index,
+-                            PayloadContext *priv_data, const char *line);
++                            void *priv_data, const char *line);
+     /** Free any data needed by the rtp parsing for this dynamic data.
+       * Don't free the protocol_data pointer itself, that is freed by the
+       * caller. This is called even if the init method failed. */
+-    void (*close)(PayloadContext *protocol_data);
++    void (*close)(void *protocol_data);
+     /** Parse handler for this dynamic packet */
+     DynamicPayloadPacketHandlerProc parse_packet;
+-    int (*need_keyframe)(PayloadContext *context);
++    int (*need_keyframe)(void *context);
+ 
+     struct RTPDynamicProtocolHandler *next;
+ };
+diff -urN a/libswresample/swresample_internal.h b/libswresample/swresample_internal.h
+--- a/libswresample/swresample_internal.h	2015-08-16 20:28:00.000000000 +0100
++++ b/libswresample/swresample_internal.h	2015-08-16 21:34:34.000000000 +0100
+@@ -160,9 +160,9 @@
+     int drop_output;                                ///< number of output samples to drop
+     double delayed_samples_fixup;                   ///< soxr 0.1.1: needed to fixup delayed_samples after flush has been called.
+ 
+-    struct AudioConvert *in_convert;                ///< input conversion context
+-    struct AudioConvert *out_convert;               ///< output conversion context
+-    struct AudioConvert *full_convert;              ///< full conversion context (single conversion for input and output)
++    void *in_convert;                ///< input conversion context
++    void *out_convert;               ///< output conversion context
++    void *full_convert;              ///< full conversion context (single conversion for input and output)
+     struct ResampleContext *resample;               ///< resampling context
+     struct Resampler const *resampler;              ///< resampler virtual function table
+ 
+@@ -199,6 +199,7 @@
+ int swri_get_dither(SwrContext *s, void *dst, int len, unsigned seed, enum AVSampleFormat noise_fmt);
+ int swri_dither_init(SwrContext *s, enum AVSampleFormat out_fmt, enum AVSampleFormat in_fmt);
+ 
++struct AudioConvert;
+ void swri_audio_convert_init_aarch64(struct AudioConvert *ac,
+                                  enum AVSampleFormat out_fmt,
+                                  enum AVSampleFormat in_fmt,

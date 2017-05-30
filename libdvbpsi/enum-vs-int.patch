@@ -1,0 +1,12 @@
+diff -urN a/src/dvbpsi_private.h b/src/dvbpsi_private.h
+--- a/src/dvbpsi_private.h	2016-01-23 16:14:09.000000000 +0000
++++ b/src/dvbpsi_private.h	2016-01-23 16:15:07.000000000 +0000
+@@ -48,7 +48,7 @@
+  *****************************************************************************/
+ 
+ #ifdef HAVE_VARIADIC_MACROS
+-HIDDEN void dvbpsi_message(dvbpsi_t *dvbpsi, const int level, const char *fmt, ...);
++HIDDEN void dvbpsi_message(dvbpsi_t *dvbpsi, const dvbpsi_msg_level_t level, const char *fmt, ...);
+ 
+ #  define dvbpsi_error(hnd, src, str, x...)                             \
+         dvbpsi_message(hnd, DVBPSI_MSG_ERROR, "libdvbpsi error (%s): " str, src, ##x)

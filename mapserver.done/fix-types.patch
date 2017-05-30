@@ -1,0 +1,12 @@
+diff -urN a/mapfile.c b/mapfile.c
+--- a/mapfile.c	2015-07-24 08:59:36.000000000 +0100
++++ b/mapfile.c	2016-01-25 20:26:37.000000000 +0000
+@@ -62,7 +62,7 @@
+ extern char *msyybasepath;
+ extern int msyyreturncomments;
+ extern char *msyystring_buffer;
+-extern char msyystring_icase;
++extern int msyystring_icase;
+ 
+ extern int loadSymbol(symbolObj *s, char *symbolpath); /* in mapsymbol.c */
+ extern void writeSymbol(symbolObj *s, FILE *stream); /* in mapsymbol.c */

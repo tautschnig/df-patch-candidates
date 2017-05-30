@@ -1,0 +1,146 @@
+From 3bd4665917062211fa80d3b7b8bf114134d5c7d7 Mon Sep 17 00:00:00 2001
+From: Michael Tautschnig <mt@debian.org>
+Date: Thu, 9 Oct 2014 20:50:10 +0100
+Subject: [PATCH 1/2] Wrap all parameter declarations in #ifdef, not just the
+ type of env
+
+---
+ csearch.c  | 6 +++++-
+ domodify.c | 6 +++++-
+ dosearch.c | 6 +++++-
+ edit.c     | 6 +++++-
+ newentry.c | 7 ++++++-
+ search.c   | 6 +++++-
+ 6 files changed, 31 insertions(+), 6 deletions(-)
+
+diff --git a/csearch.c b/csearch.c
+index eb51584..054db1c 100644
+--- a/csearch.c
++++ b/csearch.c
+@@ -30,11 +30,15 @@ static void get_request(char *fname);
+ static void emit_file(char* filename, struct ldap_searchobj* sop);
+ 
+ 
++#ifdef DSGW_DEBUG
+ int main( argc, argv, env )
+     int		argc;
+     char	*argv[];
+-#ifdef DSGW_DEBUG
+     char	*env[];
++#else
++int main( argc, argv )
++    int		argc;
++    char	*argv[];
+ #endif
+ {
+     int   reqmethod;
+diff --git a/domodify.c b/domodify.c
+index 00306cb..6370b9e 100644
+--- a/domodify.c
++++ b/domodify.c
+@@ -49,11 +49,15 @@ static int	quiet = 0;
+ static int	display_results_inline = 0;
+ 
+ 
++#ifdef DSGW_DEBUG
+ int main( argc, argv, env )
+     int		argc;
+     char	*argv[];
+-#ifdef DSGW_DEBUG
+     char	*env[];
++#else
++int main( argc, argv )
++    int		argc;
++    char	*argv[];
+ #endif
+ {
+ 
+diff --git a/dosearch.c b/dosearch.c
+index 266899d..15eee3b 100644
+--- a/dosearch.c
++++ b/dosearch.c
+@@ -50,11 +50,15 @@ ignore_cgi_var(const char *varname)
+     return 0;
+ }
+ 
++#ifdef DSGW_DEBUG
+ int main( argc, argv, env )
+     int		argc;
+     char	*argv[];
+-#ifdef DSGW_DEBUG
+     char	*env[];
++#else
++int main( argc, argv )
++    int		argc;
++    char	*argv[];
+ #endif
+ {
+     int		reqmethod;
+diff --git a/edit.c b/edit.c
+index f8ebbce..ac9db21 100644
+--- a/edit.c
++++ b/edit.c
+@@ -27,11 +27,15 @@ static void get_request(char *dn, char *tmplname,
+ 			unsigned long options);
+ 
+ 
++#ifdef DSGW_DEBUG
+ int main( argc, argv, env )
+     int		argc;
+     char	*argv[];
+-#ifdef DSGW_DEBUG
+     char	*env[];
++#else
++int main( argc, argv )
++    int		argc;
++    char	*argv[];
+ #endif
+ {
+ 
+diff --git a/newentry.c b/newentry.c
+index ce49170..e28ebdc 100644
+--- a/newentry.c
++++ b/newentry.c
+@@ -336,12 +336,17 @@ post_request()
+     if (newurl) free (newurl);
+ }
+ 
++#ifdef DSGW_DEBUG
+ int
+ main( argc, argv, env )
+     int		argc;
+     char	*argv[];
+-#ifdef DSGW_DEBUG
+     char	*env[];
++#else
++int
++main( argc, argv )
++    int		argc;
++    char	*argv[];
+ #endif
+ {
+     auto int         reqmethod;
+diff --git a/search.c b/search.c
+index 79547a1..608bcaa 100644
+--- a/search.c
++++ b/search.c
+@@ -28,11 +28,15 @@ static void get_request(char *docname);
+ static void do_searchtype_popup( struct ldap_searchobj *sop );
+ 
+ 
++#ifdef DSGW_DEBUG
+ int main( argc, argv, env )
+     int		argc;
+     char	*argv[];
+-#ifdef DSGW_DEBUG
+     char	*env[];
++#else
++int main( argc, argv )
++    int		argc;
++    char	*argv[];
+ #endif
+ {
+     auto int reqmethod; 
+-- 
+2.1.1
+

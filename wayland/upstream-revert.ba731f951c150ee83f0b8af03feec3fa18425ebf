@@ -1,0 +1,27 @@
+From ba731f951c150ee83f0b8af03feec3fa18425ebf Mon Sep 17 00:00:00 2001
+From: Marek Chalupa <mchqwerty@gmail.com>
+Date: Fri, 3 Jul 2015 09:33:23 +0200
+Subject: fixed-benchmark: remove unused arguments in main
+
+Fixed benchmark uses main(int argc, char *argv[])
+but does not use the arguments, so we can replace them with void
+
+Signed-off-by: Marek Chalupa <mchqwerty@gmail.com>
+Reviewed-by: Bryce Harrington <bryce@osg.samsung.com>
+
+diff --git a/tests/fixed-benchmark.c b/tests/fixed-benchmark.c
+index 8d73c83..277ecce 100644
+--- a/tests/fixed-benchmark.c
++++ b/tests/fixed-benchmark.c
+@@ -96,7 +96,7 @@ benchmark(const char *s, void (*f)(void))
+ 	       s, elapsed.tv_sec, elapsed.tv_nsec);
+ }
+ 
+-int main(void)
++int main(int argc, char *argv[])
+ {
+ 	benchmark("noop", noop_conversion);
+ 	benchmark("magic", magic_conversion);
+-- 
+cgit v0.10.2
+

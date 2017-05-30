@@ -1,0 +1,41 @@
+From d85ddc605621d8c1e16d4761931dd651872cd8aa Mon Sep 17 00:00:00 2001
+From: Michael Tautschnig <mt@debian.org>
+Date: Tue, 30 May 2017 15:06:43 +0000
+Subject: [PATCH] Fix type inconsistency of simple_aligner
+
+gcc  -g -O0 -fdebug-prefix-map=/home/admin/workspace/sid-goto-cc-abyss/abyss-2.0.2=. -fstack-protector-strong -Wformat -Werror=format-security  -Wl,-z,relro -Wl,-z,now -o dialign museq.o libdialign.a -ldl -lm
+assemble.c:398:1: error:
+reason for conflict at #this: conflict on POD
+
+signed int
+char
+error: conflicting function declarations `simple_aligner'
+old definition in module `museq' file museq.c line 56
+signed int (struct seq_col *, struct diag_col *, struct scr_matrix *, struct prob_dist *, struct alignment *, signed int)
+new definition in module `assemble' file assemble.c line 398
+char (struct seq_col *scol, struct diag_col *dcol, struct scr_matrix *smatrix, struct prob_dist *pdist, struct alignment *algn, signed int round)
+Makefile:350: recipe for target 'dialign' failed
+make[4]: *** [dialign] Error 1
+make[4]: Leaving directory '/home/admin/workspace/sid-goto-cc-abyss/abyss-2.0.2/dialign'
+Makefile:487: recipe for target 'all-recursive' failed
+make[3]: *** [all-recursive] Error 1
+---
+ dialign/museq.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/dialign/museq.c b/dialign/museq.c
+index 3f11ed6..653d192 100644
+--- a/dialign/museq.c
++++ b/dialign/museq.c
+@@ -53,7 +53,7 @@ extern struct prob_dist* calc_score_dist(struct scr_matrix *smatrix, int mxdlen)
+ // alig.c
+ extern struct alignment* create_empty_alignment(struct seq_col *scol);
+ //extern char adapt_diag(struct alignment *algn, struct scr_matrix *smatrix, struct diag* dg);
+-extern int  simple_aligner(struct seq_col *scol, struct diag_col *dcol, 
++extern char  simple_aligner(struct seq_col *scol, struct diag_col *dcol, 
+ 			    struct scr_matrix* smatrix, 
+ 			    struct prob_dist *pdist, 
+ 		     struct alignment *algn, int round);
+-- 
+2.1.4
+

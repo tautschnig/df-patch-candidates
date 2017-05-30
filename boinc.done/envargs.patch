@@ -1,0 +1,41 @@
+diff -urN a/zip/zip/util.c b/zip/zip/util.c
+--- a/zip/zip/util.c	2015-04-02 00:03:00.000000000 +0100
++++ b/zip/zip/util.c	2015-04-02 00:04:10.000000000 +0100
+@@ -802,7 +802,7 @@
+  |     to make the action of the code less obscure.
+  ****************************************************************/
+ 
+-void envargs(Pargc, Pargv, envstr, envstr2)
++int envargs(Pargc, Pargv, envstr, envstr2)
+     int *Pargc;
+     char ***Pargv;
+     char *envstr;
+@@ -825,7 +825,7 @@
+             while (isspace((uch)*envptr))
+                 envptr++;
+     if (envptr == NULL || *envptr == '\0')
+-        return;
++        return 0;
+ 
+     /* count the args so we can allocate room for them */
+     argc = count_args(envptr);
+@@ -902,6 +902,7 @@
+     /* save the values and return */
+     *Pargv = argvect;
+     *Pargc = argc;
++    return 0;
+ }
+ 
+ local int count_args(s)
+diff -urN a/zip/zip/zip.h b/zip/zip/zip.h
+--- a/zip/zip/zip.h	2015-04-02 00:18:02.000000000 +0100
++++ b/zip/zip/zip.h	2015-04-02 00:18:58.000000000 +0100
+@@ -811,7 +811,7 @@
+ 
+ zvoid far **search OF((ZCONST zvoid *, ZCONST zvoid far **, extent,
+                        int (*)(ZCONST zvoid *, ZCONST zvoid far *)));
+-void envargs       OF((int *, char ***, char *, char *));
++int  envargs       OF((int *, char ***, char *, char *));
+ void expand_args   OF((int *, char ***));
+ 
+ int  is_text_buf   OF((ZCONST char *buf_ptr, unsigned buf_size));

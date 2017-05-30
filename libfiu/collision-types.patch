@@ -1,0 +1,77 @@
+diff -urN a/tests/collisions/binary.c b/tests/collisions/binary.c
+--- a/tests/collisions/binary.c	2016-01-23 17:25:48.000000000 +0000
++++ b/tests/collisions/binary.c	2016-01-23 17:42:09.000000000 +0000
+@@ -2,6 +2,7 @@
+ // We use this to test function name collissions.
+ 
+ #include <stdio.h> // printf()
++#include <stdbool.h>
+ #include "libcoltest.h"
+ 
+ #define ASSERT_CALLED(NAME, N)                                                 \
+@@ -11,22 +12,34 @@
+ 		return 1;                                                      \
+ 	}
+ 
+-#define CHECK(NAME)                                                            \
++#define CHECK2(NAME)                                                            \
+ 	ASSERT_CALLED(NAME, 0)                                                 \
+-	NAME();                                                                \
++	NAME(0, 0);                                                                \
++	ASSERT_CALLED(NAME, 1)
++
++#define CHECK3(NAME)                                                            \
++	ASSERT_CALLED(NAME, 0)                                                 \
++	NAME(0, 0, 0);                                                                \
+ 	ASSERT_CALLED(NAME, 1)
+ 
+ int called_wtable_set = 0;
+ 
+-void wtable_set(void) { called_wtable_set++; }
++bool wtable_set(struct wtable *t, const char *key, void *value)
++{
++  (void)t;
++  (void)key;
++  (void)value;
++  called_wtable_set++;
++  return 0;
++}
+ 
+ int main(void)
+ {
+ 	// Defined in libcoltest.
+-	CHECK(wtable_get)
++	CHECK2(wtable_get)
+ 
+ 	// Defined here.
+-	CHECK(wtable_set)
++	CHECK3(wtable_set)
+ 
+ 	return 0;
+ }
+diff -urN a/tests/collisions/libcoltest.c b/tests/collisions/libcoltest.c
+--- a/tests/collisions/libcoltest.c	2016-01-23 17:14:08.000000000 +0000
++++ b/tests/collisions/libcoltest.c	2016-01-23 17:24:36.000000000 +0000
+@@ -3,4 +3,11 @@
+ 
+ int called_wtable_get = 0;
+ 
+-void wtable_get(void) { called_wtable_get++; }
++struct wtable;
++void *wtable_get(struct wtable *t, const char *key)
++{
++  (void)t;
++  (void)key;
++  called_wtable_get++;
++  return 0;
++}
+diff -urN a/tests/collisions/libcoltest.h b/tests/collisions/libcoltest.h
+--- a/tests/collisions/libcoltest.h	2016-01-23 17:14:04.000000000 +0000
++++ b/tests/collisions/libcoltest.h	2016-01-23 17:24:45.000000000 +0000
+@@ -1,4 +1,5 @@
+ // Headers for libcoltest.
+ 
+ extern int called_wtable_get;
+-void wtable_get(void);
++struct wtable;
++void *wtable_get(struct wtable *t, const char *key);

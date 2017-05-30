@@ -1,0 +1,38 @@
+Description: Fix quoting in M4 macros
+Bug-Debian: http://bugs.debian.org/702438
+Forwarded: no
+Author: Graham Inggs <graham@nerve.org.za>
+Last-Update: 2014-09-23
+--- a/config/mpi_check_mpi_h.m4
++++ b/config/mpi_check_mpi_h.m4
+@@ -30,7 +30,7 @@
+ cat > conftest.$ac_ext <<EOF
+ #include <mpi.h>
+ int
+-main(int argc, char* argv[])
++main(int argc, char* argv[[]])
+ { return 0; }
+ EOF
+ echo configure:__oline__: $ac_compile >&5
+--- a/config/cxx_find_template_repository.m4
++++ b/config/cxx_find_template_repository.m4
+@@ -82,7 +82,7 @@
+ }
+ 
+ int
+-main(int argc, char *argv[])
++main(int argc, char *argv[[]])
+ {
+   foo<bar> var1(6);
+   foo< foo<bar> > var2(var1);
+--- a/config/cxx_have_broken_getline.m4
++++ b/config/cxx_have_broken_getline.m4
+@@ -60,7 +60,7 @@
+ using namespace std;
+ 
+ int
+-main(int agrc, char* argv[])
++main(int argc, char* argv[[]])
+ {
+   bool good, bad, fstr, fstr_eof;
+   bool result = true;

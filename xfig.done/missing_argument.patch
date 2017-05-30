@@ -1,0 +1,21 @@
+diff -urN a/w_intersect.c b/w_intersect.c
+--- a/w_intersect.c	2015-08-15 23:27:16.000000000 +0100
++++ b/w_intersect.c	2015-08-16 01:20:53.000000000 +0100
+@@ -208,7 +208,7 @@
+   double X  = (double)(c->center.x - e->center.x);
+   double Y  = (double)(c->center.y - e->center.y);
+ 
+-  do_circle_ellipse_intersect(r, X, Y, e, x, y, isect_cb);
++  do_circle_ellipse_intersect(r, X, Y, e, x, y, NULL, isect_cb);
+ }
+ 
+ static void
+@@ -1103,7 +1103,7 @@
+       double OX = (double)(e->center.x);
+       double OY = (double)(e->center.y);
+   
+-      do_circle_circle(PX, PY, X2, Y2, R1, R2, OX, OY, a, isect_cb);
++      do_circle_circle(PX, PY, X2, Y2, R1, R2, OX, OY, a, NULL, isect_cb);
+     }
+   }
+ }

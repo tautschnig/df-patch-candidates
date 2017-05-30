@@ -1,0 +1,14 @@
+diff -urN a/includes.h b/includes.h
+--- a/includes.h	2016-02-19 23:41:46.000000000 +0000
++++ b/includes.h	2016-02-19 23:42:18.000000000 +0000
+@@ -151,9 +151,7 @@
+ # include <kafs.h>
+ #endif
+ 
+-#if defined(HAVE_SYS_SYSLOG_H)
+-# include <sys/syslog.h>
+-#endif
++#include <sys/syslog.h>
+ 
+ #include <errno.h>
+ 

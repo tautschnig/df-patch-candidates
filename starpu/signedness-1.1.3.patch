@@ -1,0 +1,14 @@
+diff -urN a/mpi/examples/matrix_decomposition/mpi_decomposition_params.h b/mpi/examples/matrix_decomposition/mpi_decomposition_params.h
+--- a/mpi/examples/matrix_decomposition/mpi_decomposition_params.h	2015-03-21 14:46:51.000000000 +0000
++++ b/mpi/examples/matrix_decomposition/mpi_decomposition_params.h	2015-03-21 14:48:43.000000000 +0000
+@@ -25,8 +25,8 @@
+ extern unsigned nbigblocks;
+ extern unsigned noprio;
+ extern unsigned display;
+-extern unsigned dblockx;
+-extern unsigned dblocky;
++extern int dblockx;
++extern int dblocky;
+ 
+ void parse_args(int argc, char **argv, int nodes);
+ 
