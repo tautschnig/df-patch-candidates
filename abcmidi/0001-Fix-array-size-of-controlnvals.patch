@@ -1,0 +1,40 @@
+From 1757b6064426a3731d06f69161a055fb58332087 Mon Sep 17 00:00:00 2001
+From: Michael Tautschnig <mt@debian.org>
+Date: Tue, 30 May 2017 15:31:25 +0000
+Subject: [PATCH 1/2] Fix array size of controlnvals
+
+gcc -g -O0 -fdebug-prefix-map=/home/admin/workspace/sid-goto-cc-abcmidi/abcmidi-20170101=. -fstack-protector-strong -Wformat -Werror=format-security -DANSILIBS -g  -Wdate-time -Wl,-z,relro -Wl,-z,now -o abc2midi parseabc.o store.o genmidi.o queues.o \
+parser2.o midifile.o stresspat.o -lm
+awk: close failed on file /dev/stdout (Broken pipe)
+queues.c:65:1: error: error: conflicting array sizes for variable `controlnvals'
+old definition in module `genmidi' file genmidi.c line 261
+signed int [3l]
+new definition in module `queues' file queues.c line 65
+signed int [2l]
+makefile:50: recipe for target 'abc2midi' failed
+make[1]: *** [abc2midi] Error 1
+make[1]: Leaving directory '/home/admin/workspace/sid-goto-cc-abcmidi/abcmidi-20170101'
+dh_auto_build: make -j1 returned exit code 2
+debian/rules:9: recipe for target 'build' failed
+make: *** [build] Error 2
+dpkg-buildpackage: error: debian/rules build gave error exit status 2
+---
+ queues.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/queues.c b/queues.c
+index 1c99e89..e4ff812 100644
+--- a/queues.c
++++ b/queues.c
+@@ -62,7 +62,7 @@ extern int bendstate; /* from genmidi.c [SS] */
+ extern int benddata[256]; /* from genmidi.c [SS] 2015-09-10 2015-10-03 */
+ extern int bendnvals;
+ extern int controldata[3][256]; /* extended to 256 2015-10-03 */
+-extern int controlnvals[2];
++extern int controlnvals[3];
+ extern int controldefaults[128]; /* [SS] 2015-08-10 */
+ extern int nlayers; /* [SS] 2015-08-20 */
+ 
+-- 
+2.1.4
+

@@ -1,0 +1,38 @@
+From a0a9a2d20a3e4c17349212efd825661b0bf6564f Mon Sep 17 00:00:00 2001
+From: Michael Tautschnig <mt@debian.org>
+Date: Wed, 31 May 2017 09:34:29 +0000
+Subject: [PATCH 2/2] Fix array size of voicecode
+
+gcc -Wl,-z,relro -Wl,-z,now -o abc2abc parseabc.o toabc.o
+toabc.c:108:1: error: error: conflicting array sizes for variable `voicecode'
+old definition in module `parseabc' file parseabc.c line 92
+char [24l][30l]
+new definition in module `toabc' file toabc.c line 108
+char [16l][30l]
+makefile:54: recipe for target 'abc2abc' failed
+make[1]: *** [abc2abc] Error 1
+make[1]: Leaving directory '/home/admin/workspace/sid-goto-cc-abcmidi/abcmidi-20170101'
+dh_auto_build: make -j1 returned exit code 2
+debian/rules:9: recipe for target 'build' failed
+make: *** [build] Error 2
+dpkg-buildpackage: error: debian/rules build gave error exit status 2
+---
+ toabc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/toabc.c b/toabc.c
+index 3a1fcc7..c06ea71 100644
+--- a/toabc.c
++++ b/toabc.c
+@@ -105,7 +105,7 @@ int noplus; /* flag for outputting !..! instructions instead of +...+ */
+ extern int nokey; /* signals no key signature assumed */
+ extern int nokeysig; /* signals -nokeys or -nokeysf option */
+ extern int voicecodes ;  /* from parseabc.c */
+-extern char voicecode[16][30]; /*for interpreting V: string */
++extern char voicecode[24][30]; /*for interpreting V: string */
+  
+ struct voicetype { /* information needed for each voice */
+   int number; /* voice number from V: field */
+-- 
+2.1.4
+
