@@ -1,0 +1,36 @@
+From b682d87f9247b346437fa58d6a3f876198516c0f Mon Sep 17 00:00:00 2001
+From: Michael Tautschnig <mt@debian.org>
+Date: Wed, 31 May 2017 15:14:52 +0000
+Subject: [PATCH] Fix type of (generated) lexer function
+
+libtool: link: gcc -shared  -fPIC -DPIC  .libs/fbl_bcomp_y.o .libs/fbl_bcomp_l.o .libs/fbh_add.o .libs/fbh_del.o .libs/fbh_env.o .libs/fbh_fre.o .libs/fbh_rin.o .libs/fbh_rmv.o .libs/fbh_typ.o .libs/fbh_uti.o .libs/fbh_view.o .libs/fbl_bspec.o .libs/fbl_drive.o .libs/fbl_util.o .libs/fvhdrive.o .libs/fvherror.o .libs/fvhfbh2fsm.o .libs/fvhparse.o   -Wl,-rpath -Wl,/home/admin/workspace/sid-goto-cc-alliance/alliance-5.1.1/fsm/src/.libs -Wl,-rpath -Wl,/home/admin/workspace/sid-goto-cc-alliance/alliance-5.1.1/abl/src/.libs -Wl,-rpath -Wl,/home/admin/workspace/sid-goto-cc-alliance/alliance-5.1.1/bdd/src/.libs -Wl,-rpath -Wl,/home/admin/workspace/sid-goto-cc-alliance/alliance-5.1.1/aut/src/.libs -Wl,-rpath -Wl,/home/admin/workspace/sid-goto-cc-alliance/alliance-5.1.1/mbk/src/.libs -Wl,-rpath -Wl,/usr/lib/alliance -L../../mbk/src -L../../aut/src -L../../bdd/src -L../../abl/src -L../../fsm/src /home/admin/workspace/sid-goto-cc-alliance/alliance-5.1.1/fsm/src/.libs/libFsm.so /home/admin/workspace/sid-goto-cc-alliance/alliance-5.1.1/abl/src/.libs/libAbl.so /home/admin/workspace/sid-goto-cc-alliance/alliance-5.1.1/bdd/src/.libs/libBdd.so /home/admin/workspace/sid-goto-cc-alliance/alliance-5.1.1/aut/src/.libs/libAut.so /home/admin/workspace/sid-goto-cc-alliance/alliance-5.1.1/mbk/src/.libs/libMut.so -lm  -g -O0 -fstack-protector-strong -Wl,-z -Wl,relro   -Wl,-soname -Wl,libFvh.so.1 -o .libs/libFvh.so.1.0.4
+<stdout>:914:1: error:
+reason for conflict at #this: conflict on POD
+
+signed long int
+signed int
+error: conflicting function declarations `fbl_y_lex'
+old definition in module `fbl_bcomp_y' file fbl_byacc.h line 122
+signed long int ()
+new definition in module `fbl_bcomp_l' file <stdout> line 914
+signed int (void)
+Makefile:624: recipe for target 'libFvh.la' failed
+make[3]: *** [libFvh.la] Error 1
+---
+ fvh/src/fbl_byacc.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fvh/src/fbl_byacc.h b/fvh/src/fbl_byacc.h
+index 0264a3a..8c7fa31 100644
+--- a/fvh/src/fbl_byacc.h
++++ b/fvh/src/fbl_byacc.h
+@@ -119,5 +119,5 @@ extern void         fbl_select();
+   extern          char * fbl_stostr __P((char *str));
+ 
+   extern           void  fbl_y_error __P((char *str));
+-  extern            long  fbl_y_lex __P(());
++  extern            int  fbl_y_lex __P(());
+ 
+-- 
+2.1.4
+
