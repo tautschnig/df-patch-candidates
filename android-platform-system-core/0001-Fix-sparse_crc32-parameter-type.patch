@@ -1,0 +1,76 @@
+From d433eacb62375ddf8a1e1cd87436f4ebf29caf0d Mon Sep 17 00:00:00 2001
+From: Michael Tautschnig <mt@debian.org>
+Date: Wed, 31 May 2017 15:00:23 +0000
+Subject: [PATCH] Fix sparse_crc32 parameter type
+
+cc libsparse/backed_block.c libsparse/output_file.c libsparse/sparse.c libsparse/sparse_crc32.c libsparse/sparse_err.c libsparse/sparse_read.c -o libsparse.so.0 -g -O0 -fdebug-prefix-map=/home/admin/workspace/sid-goto-cc-android-platform-system-core/android-platform-system-core-7.0.0+r33=. -fstack-protector-strong -Wformat -Werror=format-security -fPIC -Wdate-time -DNDEBUG -Iinclude -Ilibsparse/include -Wl,-z,relro -fPIC -shared -Wl,-soname,libsparse.so.0 -lz
+libsparse/sparse_crc32.c:101:1: error:
+reason for conflict at #this: type classes differ
+
+size_t
+signed int
+error: conflicting function declarations `sparse_crc32'
+old definition in module `output_file' file libsparse/sparse_crc32.h line 26
+uint32_t (uint32_t, const void *, size_t)
+new definition in module `sparse_crc32' file libsparse/sparse_crc32.c line 101
+uint32_t (uint32_t crc_in, const void *buf, signed int size)
+CONVERSION ERROR
+debian/libsparse.mk:8: recipe for target 'build' failed
+make[2]: *** [build] Error 1
+---
+ libsparse/sparse_crc32.c | 2 +-
+ libsparse/sparse_crc32.h | 2 +-
+ libsparse/sparse_read.c  | 4 ++--
+ 3 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/libsparse/sparse_crc32.c b/libsparse/sparse_crc32.c
+index 38bfe4a..0108190 100644
+--- a/libsparse/sparse_crc32.c
++++ b/libsparse/sparse_crc32.c
+@@ -98,7 +98,7 @@ static uint32_t crc32_tab[] = {
+  * in sys/libkern.h, where it can be inlined.
+  */
+ 
+-uint32_t sparse_crc32(uint32_t crc_in, const void *buf, int size)
++uint32_t sparse_crc32(uint32_t crc_in, const void *buf, unsigned int size)
+ {
+         const uint8_t *p = buf;
+         uint32_t crc;
+diff --git a/libsparse/sparse_crc32.h b/libsparse/sparse_crc32.h
+index 50cd9e9..651c31c 100644
+--- a/libsparse/sparse_crc32.h
++++ b/libsparse/sparse_crc32.h
+@@ -23,7 +23,7 @@
+ extern "C" {
+ #endif
+ 
+-uint32_t sparse_crc32(uint32_t crc, const void *buf, size_t size);
++uint32_t sparse_crc32(uint32_t crc, const void *buf, unsigned int size);
+ 
+ #ifdef __cplusplus
+ }
+diff --git a/libsparse/sparse_read.c b/libsparse/sparse_read.c
+index dbb4dab..a61136a 100644
+--- a/libsparse/sparse_read.c
++++ b/libsparse/sparse_read.c
+@@ -103,7 +103,7 @@ static int process_raw_chunk(struct sparse_file *s, unsigned int chunk_size,
+ 		uint32_t *crc32)
+ {
+ 	int ret;
+-	int chunk;
++	unsigned int chunk;
+ 	unsigned int len = blocks * s->block_size;
+ 
+ 	if (chunk_size % s->block_size != 0) {
+@@ -190,7 +190,7 @@ static int process_skip_chunk(struct sparse_file *s, unsigned int chunk_size,
+ 		memset(copybuf, 0, COPY_BUF_SIZE);
+ 
+ 		while (len) {
+-			int chunk = min(len, COPY_BUF_SIZE);
++			unsigned int chunk = min(len, COPY_BUF_SIZE);
+ 			*crc32 = sparse_crc32(*crc32, copybuf, chunk);
+ 			len -= chunk;
+ 		}
+-- 
+2.1.4
+
