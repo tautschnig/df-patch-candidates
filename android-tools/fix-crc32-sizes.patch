@@ -1,6 +1,8 @@
---- a/core/libsparse/sparse_crc32.c
-+++ b/core/libsparse/sparse_crc32.c
-@@ -98,7 +98,7 @@
+diff --git a/system/core/libsparse/sparse_crc32.c b/system/core/libsparse/sparse_crc32.c
+index 38bfe4a..0108190 100644
+--- a/system/core/libsparse/sparse_crc32.c
++++ b/system/core/libsparse/sparse_crc32.c
+@@ -98,7 +98,7 @@ static uint32_t crc32_tab[] = {
   * in sys/libkern.h, where it can be inlined.
   */
  
@@ -9,9 +11,22 @@
  {
          const uint8_t *p = buf;
          uint32_t crc;
---- a/core/libsparse/sparse_read.c
-+++ b/core/libsparse/sparse_read.c
-@@ -102,7 +102,7 @@
+diff --git a/system/core/libsparse/sparse_crc32.h b/system/core/libsparse/sparse_crc32.h
+index cad8a86..885fdfc 100644
+--- a/system/core/libsparse/sparse_crc32.h
++++ b/system/core/libsparse/sparse_crc32.h
+@@ -16,5 +16,5 @@
+ 
+ #include <stdint.h>
+ 
+-uint32_t sparse_crc32(uint32_t crc, const void *buf, size_t size);
++uint32_t sparse_crc32(uint32_t crc, const void *buf, unsigned int size);
+ 
+diff --git a/system/core/libsparse/sparse_read.c b/system/core/libsparse/sparse_read.c
+index 8e188e9..4da4fd8 100644
+--- a/system/core/libsparse/sparse_read.c
++++ b/system/core/libsparse/sparse_read.c
+@@ -102,7 +102,7 @@ static int process_raw_chunk(struct sparse_file *s, unsigned int chunk_size,
  		uint32_t *crc32)
  {
  	int ret;
@@ -20,16 +35,7 @@
  	unsigned int len = blocks * s->block_size;
  
  	if (chunk_size % s->block_size != 0) {
-@@ -139,7 +139,7 @@
- 		int fd, unsigned int blocks, unsigned int block, uint32_t *crc32)
- {
- 	int ret;
--	int chunk;
-+	unsigned int chunk;
- 	int64_t len = (int64_t)blocks * s->block_size;
- 	uint32_t fill_val;
- 	uint32_t *fillbuf;
-@@ -189,7 +189,7 @@
+@@ -189,7 +189,7 @@ static int process_skip_chunk(struct sparse_file *s, unsigned int chunk_size,
  		memset(copybuf, 0, COPY_BUF_SIZE);
  
  		while (len) {
@@ -38,12 +44,3 @@
  			*crc32 = sparse_crc32(*crc32, copybuf, chunk);
  			len -= chunk;
  		}
---- a/core/libsparse/sparse_crc32.h
-+++ b/core/libsparse/sparse_crc32.h
-@@ -16,5 +16,4 @@
- 
- #include <stdint.h>
- 
--uint32_t sparse_crc32(uint32_t crc, const void *buf, size_t size);
--
-+uint32_t sparse_crc32(uint32_t crc, const void *buf, unsigned int size);
