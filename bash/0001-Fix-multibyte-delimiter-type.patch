@@ -1,0 +1,63 @@
+From 0cff24b00d029a769015dbdd111198508dd3786a Mon Sep 17 00:00:00 2001
+From: Michael Tautschnig <mt@debian.org>
+Date: Wed, 31 May 2017 16:09:43 +0000
+Subject: [PATCH] Fix multibyte delimiter type
+
+gcc -L./builtins -L./lib/readline -L./lib/readline -L./lib/glob -L./lib/tilde -L./lib/malloc -L./lib/sh -Wl,-z,relro  -rdynamic  -g -O0 -fdebug-prefix-map=/home/admin/workspace/sid-goto-cc-bash/bash-4.4=. -fstack-protector-strong -Wformat -Werror=format-security -Wall -no-pie -Wno-parentheses -Wno-format-security -o bash shell.o eval.o y.tab.o general.o make_cmd.o print_cmd.o  dispose_cmd.o execute_cmd.o variables.o copy_cmd.o error.o expr.o flags.o jobs.o subst.o hashcmd.o hashlib.o mailcheck.o trap.o input.o unwind_prot.o pathexp.o sig.o test.o version.o alias.o array.o arrayfunc.o assoc.o braces.o bracecomp.o bashhist.o bashline.o  list.o stringlib.o locale.o findcmd.o redir.o pcomplete.o pcomplib.o syntax.o xmalloc.o  -lbuiltins -lglob -lsh -lreadline -lhistory -ltinfo -ltilde -lmalloc    -ldl
+./lib/sh/libsh.a(tmpfile.o): In function `sh_mktmpname':
+./build-bash/lib/sh/../../.././lib/sh/tmpfile.c:152: warning: the use of `mktemp' is dangerous, better use `mkstemp' or `mkdtemp'
+Warning: uninterpreted gcc option '-no-pie'
+../.././builtins/../.././builtins/colon.def:55:1: warning: warning: pointer parameter types differ between declaration and definition "colon_builtin"
+old definition in module builtins file builtext.h line 28
+signed int (WORD_LIST *)
+new definition in module colon file ../.././builtins/../.././builtins/colon.def line 55
+signed int (char *ignore)
+../.././builtins/../.././builtins/colon.def:63:1: warning: warning: pointer parameter types differ between declaration and definition "false_builtin"
+old definition in module builtins file builtext.h line 32
+signed int (WORD_LIST *)
+new definition in module colon file ../.././builtins/../.././builtins/colon.def line 63
+signed int (char *ignore)
+../../.././lib/glob/sm_loop.c:593:1: warning: warning: pointer parameter types differ between declaration and definition "glob_patscan"
+old definition in module glob file ../../.././lib/glob/glob.c line 123
+char * (char *, char *, signed int)
+new definition in module smatch file ../../.././lib/glob/sm_loop.c line 593
+unsigned char * (unsigned char *string, unsigned char *end, signed int delim)
+../../.././lib/glob/sm_loop.c:593:1: error:
+reason for conflict at #this: type classes differ
+
+signed int
+wint_t
+error: conflicting function declarations `glob_patscan_wc'
+old definition in module `glob' file ../../.././lib/glob/glob.c line 124
+wchar_t * (wchar_t *, wchar_t *, signed int)
+new definition in module `smatch' file ../../.././lib/glob/sm_loop.c line 593
+wchar_t * (wchar_t *string, wchar_t *end, wint_t delim)
+Makefile:572: recipe for target 'bash' failed
+make[2]: *** [bash] Error 1
+make[2]: Leaving directory '/home/admin/workspace/sid-goto-cc-bash/bash-4.4/build-bash'
+debian/rules:363: recipe for target 'stamps/stamp-build-bash' failed
+make[1]: *** [stamps/stamp-build-bash] Error 2
+make[1]: Leaving directory '/home/admin/workspace/sid-goto-cc-bash/bash-4.4'
+debian/rules:109: recipe for target 'bash-build' failed
+make: *** [bash-build] Error 2
+dpkg-buildpackage: error: debian/rules build gave error exit status 2
+---
+ lib/glob/glob.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/lib/glob/glob.c b/lib/glob/glob.c
+index 7f6eafe..49f3b73 100644
+--- a/lib/glob/glob.c
++++ b/lib/glob/glob.c
+@@ -121,7 +121,7 @@ static char **glob_dir_to_array __P((char *, char **, int));
+ 
+ /* Make sure these names continue to agree with what's in smatch.c */
+ extern char *glob_patscan __P((char *, char *, int));
+-extern wchar_t *glob_patscan_wc __P((wchar_t *, wchar_t *, int));
++extern wchar_t *glob_patscan_wc __P((wchar_t *, wchar_t *, wint_t));
+ 
+ extern char *glob_dirscan __P((char *, int));
+ 
+-- 
+2.1.4
+
