@@ -1,0 +1,52 @@
+From 87737855373fefc966042bb09413762f48eb8c9f Mon Sep 17 00:00:00 2001
+From: Michael Tautschnig <mt@debian.org>
+Date: Wed, 31 May 2017 17:01:52 +0000
+Subject: [PATCH] Align rsc_quiet with its primary declaration
+
+gcc -Wl,-z,relro -Wl,-z,now -Wall -g -O0 -fdebug-prefix-map=/home/admin/workspace/sid-goto-cc-bibtool/bibtool-2.66+ds=. -fstack-protector-strong -Wformat -Werror=format-security -Wno-misleading-indentation -Wno-unused-function -Wdate-time  -Iinclude  -o bibtool main.o crossref.o database.o entry.o error.o expand.o init.o io.o key.o macros.o names.o parse.o print.o pxfile.o record.o rewrite.o rsc.o s_parse.o symbols.o stack.o sbuffer.o tex_aux.o tex_read.o type.o version.o wordlist.o  -lkpathsea
+error.c:49:1: error: error: conflicting types for variable `rsc_quiet'
+old definition in module `main' file include/bibtool/resource.h line 151
+_Bool
+new definition in module `error' file error.c line 49
+signed int
+makefile:478: recipe for target 'bibtool' failed
+make[1]: *** [bibtool] Error 1
+make[1]: Leaving directory '/home/admin/workspace/sid-goto-cc-bibtool/bibtool-2.66+ds'
+dh_auto_build: make -j1 returned exit code 2
+debian/rules:12: recipe for target 'build' failed
+make: *** [build] Error 2
+dpkg-buildpackage: error: debian/rules build gave error exit status 2
+---
+ error.c | 2 +-
+ names.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/error.c b/error.c
+index c784c4c..6bb603e 100644
+--- a/error.c
++++ b/error.c
+@@ -46,7 +46,7 @@
+ /* External Programs							     */
+ /*===========================================================================*/
+ 
+- extern int rsc_quiet;
++ extern _Bool rsc_quiet;
+ 
+ /*---------------------------------------------------------------------------*/
+ 
+diff --git a/names.c b/names.c
+index 59c30d7..c3335e4 100644
+--- a/names.c
++++ b/names.c
+@@ -856,7 +856,7 @@ int main(argc,argv)				   /*                        */
+   }						   /*                        */
+ }						   /*------------------------*/
+ 
+- int rsc_quiet = 1;
++ _Bool rsc_quiet = 1;
+ /*
+ 
+    gcc -g -DDEBUG -DSTANDALONE names.c stack.o symbols.o sbuffer.o type.o error.o -o names
+-- 
+2.1.4
+
