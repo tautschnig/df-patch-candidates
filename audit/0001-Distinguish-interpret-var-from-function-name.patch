@@ -1,0 +1,92 @@
+From 432eb276d606162e21a6320cbdd727e00c369eae Mon Sep 17 00:00:00 2001
+From: Michael Tautschnig <mt@debian.org>
+Date: Wed, 31 May 2017 15:46:54 +0000
+Subject: [PATCH] Distinguish interpret var from function name
+
+libtool: link: gcc -fPIE -DPIE -g -D_GNU_SOURCE -g -O0 -fdebug-prefix-map=/home/admin/workspace/sid-goto-cc-audit/audit-2.6.7=. -fstack-protector-strong -Wformat -Werror=format-security -pie -Wl,-z -Wl,relro -Wl,-z -Wl,now -Wl,-z -Wl,relro -Wl,-z -Wl,now -Wl,--as-needed -o .libs/auditctl auditctl-auditctl.o auditctl-auditctl-llist.o auditctl-delete_all.o auditctl-auditctl-listing.o  -L../lib /home/admin/workspace/sid-goto-cc-audit/audit-2.6.7/debian/build/lib/.libs/libaudit.so -L../auparse /home/admin/workspace/sid-goto-cc-audit/audit-2.6.7/debian/build/auparse/.libs/libauparse.so
+../../../auparse/interpret.c:2709:1: error: error: conflicting definition for symbol `interpret'
+old definition in module `auditctl' file ../../../src/auditctl.c line 55
+signed int
+new definition in module `interpret' file ../../../auparse/interpret.c line 2709
+const char * (const rnode *r)
+Makefile:554: recipe for target 'auditctl' failed
+make[5]: *** [auditctl] Error 1
+---
+ src/auditctl-listing.c | 8 ++++----
+ src/auditctl.c         | 6 +++---
+ 2 files changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/src/auditctl-listing.c b/src/auditctl-listing.c
+index ce9e09c..7b30f29 100644
+--- a/src/auditctl-listing.c
++++ b/src/auditctl-listing.c
+@@ -32,7 +32,7 @@
+ /* Global vars */
+ static llist l;
+ static int printed;
+-extern int list_requested, interpret;
++extern int list_requested, do_interpret;
+ extern char key[AUDIT_MAX_KEY_LEN+1];
+ extern const char key_sep[2];
+ 
+@@ -113,7 +113,7 @@ static int print_arch(unsigned int value, int op)
+ 		printf(" -F arch%s0x%X", audit_operator_to_symbol(op),
+ 				(unsigned)value);
+ 	else {
+-		if (interpret == 0) {
++		if (do_interpret == 0) {
+ 			if (__AUDIT_ARCH_64BIT & _audit_elf)
+ 				printf(" -F arch%sb64",
+ 						audit_operator_to_symbol(op));
+@@ -407,7 +407,7 @@ static void print_rule(const struct audit_rule_data *r)
+ 					a1 = r->values[i];
+ 
+ 				// Show these as hex
+-				if (count > 1 || interpret == 0)
++				if (count > 1 || do_interpret == 0)
+ 					printf(" -F %s%s0x%X", name, 
+ 						audit_operator_to_symbol(op),
+ 						r->values[i]);
+@@ -532,7 +532,7 @@ int audit_print_reply(struct audit_reply *rep, int fd)
+ 			printed = 1;
+ 			break;
+ 		case AUDIT_GET:
+-			if (interpret)
++			if (do_interpret)
+ 				printf("enabled %s\nfailure %s\n",
+ 					get_enable(rep->status->enabled),
+ 					get_failure(rep->status->failure));
+diff --git a/src/auditctl.c b/src/auditctl.c
+index f921a55..1b8dc1f 100644
+--- a/src/auditctl.c
++++ b/src/auditctl.c
+@@ -52,7 +52,7 @@ static void get_reply(void);
+ extern int delete_all_rules(int fd);
+ 
+ /* Global vars */
+-int list_requested = 0, interpret = 0;
++int list_requested = 0, do_interpret = 0;
+ char key[AUDIT_MAX_KEY_LEN+1];
+ const char key_sep[2] = { AUDIT_KEY_SEPARATOR, 0 };
+ static int keylen;
+@@ -569,7 +569,7 @@ static int setopt(int count, int lineno, char *vars[])
+ 			break;
+ 		} else if (optind == 2 && count == 3) { 
+ 			if (strcmp(vars[optind], "-i") == 0) {
+-				interpret = 1;
++				do_interpret = 1;
+ 				count -= 1;
+ 			} else {
+ 				audit_msg(LOG_ERR,
+@@ -656,7 +656,7 @@ static int setopt(int count, int lineno, char *vars[])
+ 		}
+ 		if (count == 3) { 
+ 			if (strcmp(vars[optind], "-i") == 0) {
+-				interpret = 1;
++				do_interpret = 1;
+ 				count -= 1;
+ 			} else {
+ 				audit_msg(LOG_ERR,
+-- 
+2.1.4
+
