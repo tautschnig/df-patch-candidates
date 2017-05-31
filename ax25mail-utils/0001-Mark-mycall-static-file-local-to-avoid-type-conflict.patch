@@ -1,0 +1,92 @@
+From 4ec8b9c5ac9a3662b2dc3d2d250ad3a42d570edf Mon Sep 17 00:00:00 2001
+From: Michael Tautschnig <mt@debian.org>
+Date: Wed, 31 May 2017 15:43:02 +0000
+Subject: [PATCH] Mark mycall static (file-local) to avoid type conflicts
+
+gcc -g -Wall -g -O0 -fdebug-prefix-map=/home/admin/workspace/sid-goto-cc-ax25mail-utils/ax25mail-utils-0.13=. -fstack-protector-strong -Wformat -Werror=format-security  -Wl,-z,relro -o axgetlist axgetlist.o auth.o calls.o common.o conbbs.o
+conbbs.c:37:1: error: error: conflicting array sizes for variable `mycall'
+old definition in module `axgetlist' file axgetlist.c line 45
+char [32l]
+new definition in module `conbbs' file conbbs.c line 37
+char [20l]
+Makefile:232: recipe for target 'axgetlist' failed
+make[3]: *** [axgetlist] Error 1
+make[3]: Leaving directory '/home/admin/workspace/sid-goto-cc-ax25mail-utils/ax25mail-utils-0.13/axgetlist'
+Makefile:260: recipe for target 'all-recursive' failed
+make[2]: *** [all-recursive] Error 1
+---
+ axgetlist/axgetlist.c | 2 +-
+ axgetlist/conbbs.c    | 2 +-
+ axgetmail/axgetmsg.c  | 2 +-
+ axgetmail/conbbs.c    | 2 +-
+ ulistd/ulistd.c       | 2 +-
+ 5 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/axgetlist/axgetlist.c b/axgetlist/axgetlist.c
+index b72a92b..2aa9641 100644
+--- a/axgetlist/axgetlist.c
++++ b/axgetlist/axgetlist.c
+@@ -42,7 +42,7 @@ char *def_month[] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+ 
+ /* configuration */
+-char mycall[32];
++static char mycall[32];
+ char bbscall[32];
+ char bbsport[32];
+ char cmd_list[256];
+diff --git a/axgetlist/conbbs.c b/axgetlist/conbbs.c
+index 92778d1..937bfa9 100644
+--- a/axgetlist/conbbs.c
++++ b/axgetlist/conbbs.c
+@@ -34,7 +34,7 @@
+ #define CONTIME 300                  //connect timeout [seconds]
+ #define BUFSIZE 1024
+ 
+-char mycall[20];            /* my callsign */
++static char mycall[20];            /* my callsign */
+ char bbscall[20];           /* BBS callsign */
+ char bcall[20];             /* Base callsign of port */
+ char bbspath[256];          /* path to BBS */
+diff --git a/axgetmail/axgetmsg.c b/axgetmail/axgetmsg.c
+index eb9cf62..789e0b1 100644
+--- a/axgetmail/axgetmsg.c
++++ b/axgetmail/axgetmsg.c
+@@ -23,7 +23,7 @@
+ #define VERSION "0.09"
+ #endif
+ 
+-char mycall[20];            /* my callsign */
++static char mycall[20];            /* my callsign */
+ char bbscall[20];           /* BBS callsign */
+ char bbspath[256];          /* path to BBS */
+ 
+diff --git a/axgetmail/conbbs.c b/axgetmail/conbbs.c
+index 92778d1..937bfa9 100644
+--- a/axgetmail/conbbs.c
++++ b/axgetmail/conbbs.c
+@@ -34,7 +34,7 @@
+ #define CONTIME 300                  //connect timeout [seconds]
+ #define BUFSIZE 1024
+ 
+-char mycall[20];            /* my callsign */
++static char mycall[20];            /* my callsign */
+ char bbscall[20];           /* BBS callsign */
+ char bcall[20];             /* Base callsign of port */
+ char bbspath[256];          /* path to BBS */
+diff --git a/ulistd/ulistd.c b/ulistd/ulistd.c
+index 07e0cf0..8b862bb 100644
+--- a/ulistd/ulistd.c
++++ b/ulistd/ulistd.c
+@@ -136,7 +136,7 @@ struct bbs{
+ static struct bbs *BBSBEG=NULL;
+ 
+ /* setup */
+-char mycall[20];             /* my callsign */
++static char mycall[20];             /* my callsign */
+ int logging = 0;             /* write to syslog ? */
+ int startreq = 1;            /* send requests at starup ? */
+ int minmsg = 1;              /* start asking this number */
+-- 
+2.1.4
+
