@@ -1,0 +1,61 @@
+From 26807da6740c68c5adecda6b1ad6780445551f6a Mon Sep 17 00:00:00 2001
+From: Michael Tautschnig <mt@debian.org>
+Date: Wed, 31 May 2017 15:34:13 +0000
+Subject: [PATCH] Use a uniform type for sts_viewtype
+
+x86_64-linux-gnu-gcc  -g -O2 -Wall -W   -o ap-config  ap-config.o auth.o bridge.o nwn_advanced.o nwn_latest.o stations.o aplink.o ../lib/libap.a -lmenu -lncurses
+scr.c:30:1: error: error: conflicting types for variable `sts_viewtype'
+old definition in module `stations' file stations.c line 34
+signed int
+new definition in module `scr' file scr.c line 30
+enum
+Makefile:300: recipe for target 'ap-config' failed
+make[3]: *** [ap-config] Error 1
+---
+ lib/ap-utils.h | 2 ++
+ lib/scr.c      | 2 +-
+ src/stations.c | 2 +-
+ 3 files changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/lib/ap-utils.h b/lib/ap-utils.h
+index cd9c8c1..82553ae 100644
+--- a/lib/ap-utils.h
++++ b/lib/ap-utils.h
+@@ -179,6 +179,8 @@ typedef unsigned int uint32_t;
+ #define GEMTEK 1
+ #define EZYNET 2
+ 
++typedef enum { dBm, percentage, rawval } sts_viewtype_t;
++
+ typedef struct {
+     unsigned char *oid;
+     int len_oid;
+diff --git a/lib/scr.c b/lib/scr.c
+index 6ad506a..f5d0121 100644
+--- a/lib/scr.c
++++ b/lib/scr.c
+@@ -27,7 +27,7 @@
+ extern WINDOW *main_sub, *win_for_help, *main_win;
+ extern short ap_type, ap_vendorext;
+ 
+-enum { dBm, percentage, rawval } sts_viewtype = dBm;
++sts_viewtype_t sts_viewtype = dBm;
+ 
+ void
+ scroll_rows(struct MacListStat *first, int begin, int end, int row,
+diff --git a/src/stations.c b/src/stations.c
+index bb6ca90..c2e1446 100644
+--- a/src/stations.c
++++ b/src/stations.c
+@@ -31,7 +31,7 @@
+ extern int LINES;
+ extern WINDOW *main_sub;
+ extern short ap_type, ap_vendorext;
+-extern int sts_viewtype;
++extern sts_viewtype_t sts_viewtype;
+ 
+ void atmel_stations()
+ {
+-- 
+2.1.4
+
