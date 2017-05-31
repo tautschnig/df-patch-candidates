@@ -1,0 +1,39 @@
+From a778d9e0f89bc7ab632a6d4109e984e3d39d07e9 Mon Sep 17 00:00:00 2001
+From: Michael Tautschnig <mt@debian.org>
+Date: Wed, 31 May 2017 17:53:06 +0000
+Subject: [PATCH] Fix snippets_snr_* return type declarations
+
+libtool: link: gcc -shared  -fPIC -DPIC  .libs/snippets.o .libs/snippets_gui.o .libs/snippets_leaf_insert.o .libs/snippets_leaf_snr.o .libs/snippets_load.o .libs/snippets_wizard.o .libs/snippetsmenu.o   -lm -L/usr/lib/python2.7/config -lpython2.7 -lpthread -ldl -lutil -lgtk-3 -latk-1.0 -lgdk-3 -lpangocairo-1.0 -lcairo-gobject -lcairo -lgmodule-2.0 -lpango-1.0 -lgdk_pixbuf-2.0 -lgio-2.0 -lgobject-2.0 -lgthread-2.0 -lglib-2.0 -lxml2 /usr/lib/x86_64-linux-gnu/libenchant.so  -g -O0 -fstack-protector-strong -pthread -Wl,-z -Wl,relro -Wl,--export-dynamic -pthread -pthread   -pthread -Wl,-soname -Wl,snippets.so -o .libs/snippets.so
+snippets_leaf_snr.h:23:1: error:
+reason for conflict at #this: type classes differ
+
+enum  { snr3scope_doc=0, snr3scope_cursor=1, snr3scope_selection=2, snr3scope_alldocs=3, snr3scope_files=4 }
+gint
+error: conflicting function declarations `snippets_snr_region_from_char'
+old definition in module `snippets_leaf_snr' file snippets_leaf_snr.c line 30
+Tsnr3scope (const xmlChar *region)
+new definition in module `snippets_wizard' file snippets_leaf_snr.h line 23
+gint (const xmlChar *)
+Makefile:522: recipe for target 'snippets.la' failed
+---
+ src/plugin_snippets/snippets_leaf_snr.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/plugin_snippets/snippets_leaf_snr.h b/src/plugin_snippets/snippets_leaf_snr.h
+index 3de912a..83ab079 100644
+--- a/src/plugin_snippets/snippets_leaf_snr.h
++++ b/src/plugin_snippets/snippets_leaf_snr.h
+@@ -20,8 +20,8 @@
+ #ifndef SNIPPETS_LEAF_SNR_H
+ #define SNIPPETS_LEAF_SNR_H
+ 
+-gint snippets_snr_region_from_char(const xmlChar *region);
+-gint snippets_snr_matchtype_from_char(const xmlChar *matchtype);
++Tsnr3scope snippets_snr_region_from_char(const xmlChar *region);
++Tsnr3type snippets_snr_matchtype_from_char(const xmlChar *matchtype);
+ void snippets_activate_leaf_snr(Tsnippetswin *snw, xmlNodePtr parent);
+ 
+ 
+-- 
+2.1.4
+
