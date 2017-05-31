@@ -1,0 +1,33 @@
+From e256ca5028cdef5f2e0e4c7bb475b95ca18631b8 Mon Sep 17 00:00:00 2001
+From: Michael Tautschnig <mt@debian.org>
+Date: Wed, 31 May 2017 09:52:10 +0000
+Subject: [PATCH] ds_become_original is not passed an argument at call (and
+ does not require one)
+
+$ git grep ds_become_orig
+admserv/cgi-ds/ds_listdb.c:    ds_become_original();
+include/libdsa/dsalib.h:extern DS_EXPORT_SYMBOL char* ds_become_original();
+lib/libdsa/dsalib_util.c:ds_become_original (char **ds_config)
+
+error: wrong number of function arguments: expected 1, but got 0
+CONVERSION ERROR
+---
+ lib/libdsa/dsalib_util.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/lib/libdsa/dsalib_util.c b/lib/libdsa/dsalib_util.c
+index 803f86d..f16bd5c 100644
+--- a/lib/libdsa/dsalib_util.c
++++ b/lib/libdsa/dsalib_util.c
+@@ -260,7 +260,7 @@ ds_become_localuser (char **ds_config)
+ }
+ 
+ DS_EXPORT_SYMBOL char*
+-ds_become_original (char **ds_config)
++ds_become_original ()
+ {
+ #if !defined( XP_WIN32 )
+     if (saved_uid_valid) {
+-- 
+2.1.4
+
