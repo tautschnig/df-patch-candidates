@@ -1,0 +1,32 @@
+From 53e47aaf79eff596be86392f99365ef5a9af585a Mon Sep 17 00:00:00 2001
+From: Michael Tautschnig <mt@debian.org>
+Date: Wed, 31 May 2017 16:24:59 +0000
+Subject: [PATCH] Consistent typing of priv.format_version
+
+/home/admin/workspace/sid-goto-cc-appstream/appstream-0.10.6/src/as-xmldata.c: In function 'as_xmldata_serialize_to_collection_with_rootnode':
+/home/admin/workspace/sid-goto-cc-appstream/appstream-0.10.6/src/as-xmldata.c:2257:1: error: in expression `priv->format_version':
+conversion from `gdouble' to `AsFormatVersion': implicit conversion not permitted
+CONVERSION ERROR
+src/CMakeFiles/appstream.dir/build.make:99: recipe for target 'src/CMakeFiles/appstream.dir/as-xmldata.c.o' failed
+make[3]: *** [src/CMakeFiles/appstream.dir/as-xmldata.c.o] Error 1
+make[3]: *** Waiting for unfinished jobs....
+---
+ src/as-xmldata.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/as-xmldata.c b/src/as-xmldata.c
+index 0be2538..48f920e 100644
+--- a/src/as-xmldata.c
++++ b/src/as-xmldata.c
+@@ -46,7 +46,7 @@
+ 
+ typedef struct
+ {
+-	gdouble format_version;
++	AsFormatVersion format_version;
+ 	gchar *locale;
+ 	gchar *origin;
+ 	gchar *media_baseurl;
+-- 
+2.1.4
+
