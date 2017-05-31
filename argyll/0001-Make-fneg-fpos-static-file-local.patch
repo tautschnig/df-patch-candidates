@@ -1,0 +1,56 @@
+From 44a30567f242356ddc6c7db83962717b0b12bb91 Mon Sep 17 00:00:00 2001
+From: Michael Tautschnig <mt@debian.org>
+Date: Wed, 31 May 2017 15:51:39 +0000
+Subject: [PATCH] Make fneg/fpos static (file-local)
+
+ccast/dpat.c:89:1: error:
+reason for conflict at *#this: type classes differ
+
+signed int [2l]
+signed int
+error: conflicting types for variable `fpos'
+old definition in module `filt' file ccast/filt.c line 179
+signed int [2l][2l]
+new definition in module `dpat' file ccast/dpat.c line 89
+signed int [2l]
+
+        cc -o ccast/filt  ccast/filt.o  ccast/libccast.a yajl/libyajl.a numlib/libnum.a spectro/libconv.a  -Wl,-z,relro -Wl,-z,now -L/usr/lib/x86_64-linux-gnu -ldl -lrt -lX11 -lXext -lXxf86vm -lXinerama -lXrandr -lXau -lXdmcp -lXss -ltiff -ljpeg -lpng -lz -lssl -lm -lpthread
+---
+ ccast/dpat.c | 4 ++--
+ ccast/filt.c | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/ccast/dpat.c b/ccast/dpat.c
+index a8792fe..b557b60 100644
+--- a/ccast/dpat.c
++++ b/ccast/dpat.c
+@@ -85,8 +85,8 @@ double *filt[2][2] = { { &filt_v_ev[0][-(EV_NEG)], &filt_v_od[0][-(OD_NEG)] },
+                        { &filt_v_ev[1][-(EV_NEG)], &filt_v_od[1][-(OD_NEG)] } };
+ 
+ /* [phase] */
+-int fneg[2] = { EV_NEG, OD_NEG };
+-int fpos[2] = { EV_POS, OD_POS };
++static int fneg[2] = { EV_NEG, OD_NEG };
++static int fpos[2] = { EV_POS, OD_POS };
+ 
+ /* Dither input size */
+ #ifdef TEST_POINT
+diff --git a/ccast/filt.c b/ccast/filt.c
+index 65cf7bd..5ad9665 100644
+--- a/ccast/filt.c
++++ b/ccast/filt.c
+@@ -174,9 +174,9 @@ double *filtn[2][2] = { { &filt_vn[0][0][FWIDTH], &filt_vn[0][1][FWIDTH] },
+ 
+ //int fneg[2] = { -5, -4 };		/* Negative index range (inclusive) */
+ //int fpos[2] = {  5,  3 };		/* Positive index range (inclusive) */
+-int fneg[2][2] = { { -4, -4 },		/* Negative index range (inclusive) */
++static int fneg[2][2] = { { -4, -4 },		/* Negative index range (inclusive) */
+                    { -4, -4 } };
+-int fpos[2][2] = { {  4,  3 },		/* Positive index range (inclusive) */
++static int fpos[2][2] = { {  4,  3 },		/* Positive index range (inclusive) */
+                    {  4,  3 } };
+ 
+ /* Weightings [horiz/vert][phase] */
+-- 
+2.1.4
+
