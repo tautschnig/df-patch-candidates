@@ -1,7 +1,7 @@
 From 432eb276d606162e21a6320cbdd727e00c369eae Mon Sep 17 00:00:00 2001
 From: Michael Tautschnig <mt@debian.org>
 Date: Wed, 31 May 2017 15:46:54 +0000
-Subject: [PATCH] Distinguish interpret var from function name
+Subject: [PATCH 1/2] Distinguish interpret var from function name
 
 libtool: link: gcc -fPIE -DPIE -g -D_GNU_SOURCE -g -O0 -fdebug-prefix-map=/home/admin/workspace/sid-goto-cc-audit/audit-2.6.7=. -fstack-protector-strong -Wformat -Werror=format-security -pie -Wl,-z -Wl,relro -Wl,-z -Wl,now -Wl,-z -Wl,relro -Wl,-z -Wl,now -Wl,--as-needed -o .libs/auditctl auditctl-auditctl.o auditctl-auditctl-llist.o auditctl-delete_all.o auditctl-auditctl-listing.o  -L../lib /home/admin/workspace/sid-goto-cc-audit/audit-2.6.7/debian/build/lib/.libs/libaudit.so -L../auparse /home/admin/workspace/sid-goto-cc-audit/audit-2.6.7/debian/build/auparse/.libs/libauparse.so
 ../../../auparse/interpret.c:2709:1: error: error: conflicting definition for symbol `interpret'
