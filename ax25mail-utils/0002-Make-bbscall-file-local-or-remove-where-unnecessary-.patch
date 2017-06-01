@@ -1,0 +1,87 @@
+From 3298eec70957999a056d4939d39ad3d8101297c5 Mon Sep 17 00:00:00 2001
+From: Michael Tautschnig <mt@debian.org>
+Date: Thu, 1 Jun 2017 06:35:10 +0000
+Subject: [PATCH 2/2] Make bbscall file-local or remove where unnecessary
+ (sizes differ)
+
+gcc -g -Wall -g -O0 -fdebug-prefix-map=/home/admin/workspace/sid-goto-cc-ax25mail-utils/ax25mail-utils-0.13=. -fstack-protector-strong -Wformat -Werror=format-security  -Wl,-z,relro -o axgetlist axgetlist.o auth.o calls.o common.o conbbs.o
+conbbs.c:38:1: error: error: conflicting array sizes for variable `bbscall'
+old definition in module `axgetlist' file axgetlist.c line 46
+char [32l]
+new definition in module `conbbs' file conbbs.c line 38
+char [20l]
+Makefile:232: recipe for target 'axgetlist' failed
+make[3]: *** [axgetlist] Error 1
+---
+ axgetlist/axgetlist.c | 2 +-
+ axgetlist/conbbs.c    | 1 -
+ axgetmail/axgetmail.c | 2 +-
+ axgetmail/axgetmsg.c  | 1 -
+ axgetmail/conbbs.c    | 1 -
+ 5 files changed, 2 insertions(+), 5 deletions(-)
+
+diff --git a/axgetlist/axgetlist.c b/axgetlist/axgetlist.c
+index 2aa9641..6634bca 100644
+--- a/axgetlist/axgetlist.c
++++ b/axgetlist/axgetlist.c
+@@ -43,7 +43,7 @@ char *def_month[] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
+ 
+ /* configuration */
+ static char mycall[32];
+-char bbscall[32];
++static char bbscall[32];
+ char bbsport[32];
+ char cmd_list[256];
+ char cmd_from[256];
+diff --git a/axgetlist/conbbs.c b/axgetlist/conbbs.c
+index 937bfa9..b837c2f 100644
+--- a/axgetlist/conbbs.c
++++ b/axgetlist/conbbs.c
+@@ -35,7 +35,6 @@
+ #define BUFSIZE 1024
+ 
+ static char mycall[20];            /* my callsign */
+-char bbscall[20];           /* BBS callsign */
+ char bcall[20];             /* Base callsign of port */
+ char bbspath[256];          /* path to BBS */
+ 
+diff --git a/axgetmail/axgetmail.c b/axgetmail/axgetmail.c
+index 7c5f9fe..ff3522f 100644
+--- a/axgetmail/axgetmail.c
++++ b/axgetmail/axgetmail.c
+@@ -39,7 +39,7 @@
+ /* strip eoln from string */
+ #define EX_EOLN(x) if (x[strlen(x)-1] == '\n') x[strlen(x)-1] = '\0'
+ 
+-char bbscall[256];          /* BBS callsign (from cmdline) */
++static char bbscall[256];          /* BBS callsign (from cmdline) */
+ char user_home[256];        /* user's home dir ($HOME) */
+ 
+ /* config */
+diff --git a/axgetmail/axgetmsg.c b/axgetmail/axgetmsg.c
+index 789e0b1..400b006 100644
+--- a/axgetmail/axgetmsg.c
++++ b/axgetmail/axgetmsg.c
+@@ -24,7 +24,6 @@
+ #endif
+ 
+ static char mycall[20];            /* my callsign */
+-char bbscall[20];           /* BBS callsign */
+ char bbspath[256];          /* path to BBS */
+ 
+ char port_name[32];         /* port name */
+diff --git a/axgetmail/conbbs.c b/axgetmail/conbbs.c
+index 937bfa9..b837c2f 100644
+--- a/axgetmail/conbbs.c
++++ b/axgetmail/conbbs.c
+@@ -35,7 +35,6 @@
+ #define BUFSIZE 1024
+ 
+ static char mycall[20];            /* my callsign */
+-char bbscall[20];           /* BBS callsign */
+ char bcall[20];             /* Base callsign of port */
+ char bbspath[256];          /* path to BBS */
+ 
+-- 
+2.1.4
+
